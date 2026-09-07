@@ -1,7 +1,6 @@
 # TechStore Chile — Plataforma eCommerce en Django
 
-> **Evaluación Sumativa 1 (15% - 80 Puntos)**  
-> **Asignatura:** Programación Backend (`TI3V41 / FB50-N4-P13-C1`)  
+> **Proyecto:** Programación Backend (`TI3V41 / FB50-N4-P13-C1`)  
 > **Carrera:** Analista Programador / Ingeniería en Informática  
 > **Institución:** INACAP — Sede Apoquindo  
 > **Docente:** Claudio Rubilar Cid  
@@ -19,14 +18,14 @@ Además, incorpora un **Carrito de Compras Lateral (Offcanvas Bootstrap 5)** que
 
 ---
 
-## 🎯 2. Cumplimiento de la Rúbrica de Evaluación (80 / 80 Puntos)
+## 🎯 2. Módulos y Capacidades Técnicas del Sistema
 
-| Criterio | Puntaje | Nivel | Evidencia en el Código |
-| :--- | :---: | :---: | :--- |
-| **1.1.1 Variables, funciones, vistas y rutas** | **20 pts** | **Excelente** | Funciones de vista en Python (`inicio`, `catalogo`, `detalle_producto`, `panel`, etc.), paso de diccionarios `contexto` vía `render()`, función matemática de formateo CLP `formato_clp()`, y rutas dinámicas con parámetros tipo `<int:id>/`. |
-| **1.1.2 Estructuras de decisión, operadores y diccionarios** | **20 pts** | **Excelente** | Datos organizados en colecciones de diccionarios en [productos/data/productos.json](productos/data/productos.json) gestionados por [productos/datos.py](productos/datos.py). Uso de estructuras `if/else`, operadores relacionales (`==`, `>`), lógicos (`and`) y aritméticos (`*`, `/`, `-`) para descuentos y control de stock. |
-| **1.1.3 Modularización en 2 aplicaciones** | **20 pts** | **Excelente** | Dos aplicaciones independientes (`productos` y `administracion`) registradas en `INSTALLED_APPS` y delegadas con `include()` en [tiendaonline/urls.py](tiendaonline/urls.py). |
-| **1.1.4 Identidad corporativa, framework CSS y navegación** | **20 pts** | **Excelente** | Framework Bootstrap 5 vía CDN, logotipo corporativo vectorial [static/img/logo.svg](static/img/logo.svg), estilos en [static/css/estilos.css](static/css/estilos.css), menú con 3 rutas principales y footer corporativo completo. |
+| Módulo / Capacidad | Descripción Técnica | Archivos de Referencia |
+| :--- | :--- | :--- |
+| **Variables, Vistas y Enrutamiento** | Vistas basadas en funciones (`inicio`, `catalogo`, `detalle_producto`, `panel`, etc.), paso de diccionarios `contexto` vía `render()`, función de formato de moneda chilena `formato_clp()` y rutas dinámicas parametrizadas con `<int:id>/`. | `productos/views.py`<br>`administracion/views.py` |
+| **Estructuras de Decisión y Colecciones** | Inventario estructurado en colecciones de diccionarios con persistencia JSON. Operadores relacionales (`==`, `>`), lógicos (`and`) y aritméticos (`*`, `/`, `-`) para cálculo dinámico de descuentos, ahorro y control de stock. | `productos/datos.py`<br>`productos/data/productos.json` |
+| **Arquitectura Modular Desacoplada** | Separación de responsabilidades en aplicaciones independientes (`productos` y `administracion`) integradas limpiamente en el enrutador central mediante `include()`. | `tiendaonline/urls.py`<br>`tiendaonline/settings.py` |
+| **Interfaz y Experiencia de Usuario (UI/UX)** | Framework Bootstrap 5 responsivo, identidad visual corporativa con logotipo SVG propio, estilos CSS personalizados, menú de 3 rutas y footer con información de soporte. | `templates/base.html`<br>`static/css/estilos.css` |
 
 ---
 
@@ -176,18 +175,18 @@ py manage.py collectstatic
 
 ---
 
-## 🎓 7. Guion de Demostración para el Laboratorio
+## 🎓 7. Flujo de Demostración y Pruebas
 
-Para defender la evaluación ante el docente **Claudio Rubilar**:
+Pasos recomendados para revisar y demostrar el funcionamiento completo del sistema:
 
-1. **Levantar el servidor:**  
+1. **Iniciar el entorno local:**  
    `cd "c:\Users\fabia\Documents\_INACAP\Semestre 4\Backend\Ev1\tiendaonline"`  
    `py manage.py runserver`
-2. **Explicar la modularización (Criterio 1.1.3):**  
-   Mostrar [tiendaonline/urls.py](tiendaonline/urls.py) y explicar cómo `include('productos.urls')` e `include('administracion.urls')` desacoplan el sistema.
-3. **Explicar los diccionarios y operadores (Criterio 1.1.2):**  
-   Mostrar [productos/datos.py](productos/datos.py) y [productos/views.py](productos/views.py). Señalar las operaciones de descuento (`*`, `/`, `-`), operadores lógicos (`and`) y estructuras `if / else`.
-4. **Probar el carrito y stock reactivo (Criterio 1.1.4):**  
-   Agregar unidades del *Notebook ASUS* en el catálogo hasta agotar las 5 unidades. Mostrar cómo cambia la tarjeta a "Agotado" en tiempo real y cómo el drawer lateral calcula el total en `$ CLP`.
-5. **Probar el CRUD de Administración:**  
-   Ir a `/administracion/`, editar el producto agotado y subirle el stock a 10. Volver al catálogo para comprobar que vuelve a estar disponible inmediatamente.
+2. **Modularización y Arquitectura:**  
+   Revisar [tiendaonline/urls.py](tiendaonline/urls.py) y evidenciar la delegación de rutas mediante `include()` hacia las aplicaciones `productos` y `administracion`.
+3. **Lógica de Negocio y Datos:**  
+   Revisar [productos/datos.py](productos/datos.py) y [productos/views.py](productos/views.py), destacando la manipulación de diccionarios, cálculos de descuentos en tiempo de ejecución y validaciones condicionales.
+4. **Carrito Lateral y Stock Dinámico:**  
+   Desde el catálogo, agregar unidades del *Notebook ASUS* hasta agotar el stock disponible (5 unidades). Observar cómo la interfaz refleja el estado "Agotado" en tiempo real y cómo el panel lateral calcula el total en `$ CLP`.
+5. **Panel Administrativo CRUD:**  
+   Navegar a `/administracion/`, editar un producto (por ejemplo, reponer stock o modificar precios) y comprobar cómo se refleja instantáneamente en el catálogo y la portada.
