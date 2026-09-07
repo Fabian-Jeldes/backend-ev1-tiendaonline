@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Panel de Administración | TechStore{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h1 class="display-6 fw-bold text-dark mb-1">
+            <i class="bi bi-gear-wide-connected text-primary me-2"></i>Gestión de Productos
+        </h1>
+        <p class="text-muted mb-0">Área de administración: crea, edita, actualiza stock y gestiona precios de la tienda.</p>
+    </div>
+    <a href="{% url 'admin_nuevo' %}" class="btn btn-primary btn-lg rounded-pill shadow-sm px-4">
+        <i class="bi bi-plus-circle me-1"></i> Agregar Nuevo Producto
+    </a>
+</div>
+
+<!-- TARJETAS DE RESUMEN ADMINISTRATIVO -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 me-3 fs-3">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small text-uppercase fw-bold">Total Artículos</h6>
+                    <h3 class="fw-bold mb-0">{{ total_productos }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-danger bg-opacity-10 text-danger p-3 me-3 fs-3">
+                    <i class="bi bi-fire"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small text-uppercase fw-bold">En Oferta</h6>
+                    <h3 class="fw-bold mb-0">{{ en_oferta }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-warning bg-opacity-10 text-warning p-3 me-3 fs-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small text-uppercase fw-bold">Sin Stock / Agotados</h6>
+                    <h3 class="fw-bold mb-0">{{ agotados }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TABLA CRUD DE PRODUCTOS -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="card-header bg-white py-3 border-0">
+        <h5 class="fw-bold mb-0 text-secondary">Catálogo Actual de Inventario</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th scope="col" class="ps-4">Item</th>
+                    <th scope="col">Nombre & Categoría</th>
+                    <th scope="col">Precio CLP</th>
+                    <th scope="col">Oferta / Descuento</th>
+                    <th scope="col">Stock Disponible</th>
+                    <th scope="col" class="text-end pe-4">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prod in productos %}
+                <tr>
+                    <td class="ps-4">
+                        <img src="{{ prod.imagen }}" alt="{{ prod.nombre }}" class="rounded-3 shadow-sm border" style="width: 50px; height: 50px; object-fit: cover;">
+                    </td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ prod.nombre }}</div>
+                        <span class="badge bg-light text-secondary border small">{{ prod.categoria }}</span>
+                        <span class="text-muted small ms-1">SKU #{{ prod.id }}</span>
+                    </td>
+                    <td>
+                        <span class="fw-bold text-primary">{{ prod.precio_formateado }}</span>
+                    </td>
+                    <td>
+                        {% if prod.oferta %}
+                            <span class="badge bg-danger rounded-pill">-{{ prod.descuento }}% OFF</span>
+                        {% else %}
+                            <span class="badge bg-light text-muted border">Normal</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if prod.stock > 5 %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                <i class="bi bi-check-circle me-1"></i> {{ prod.stock }} unidades
+                            </span>
+                        {% elif prod.stock > 0 %}
+                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill">
+                                <i class="bi bi-exclamation-circle me-1"></i> Bajo: {{ prod.stock }} un.
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill">
+                                <i class="bi bi-x-circle me-1"></i> Agotado (0)
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-4">
+                        <div class="btn-group" role="group">
+                            <a href="{% url 'detalle_producto' prod.id %}" class="btn btn-sm btn-outline-secondary" title="Ver en tienda" target="_blank">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'admin_editar' prod.id %}" class="btn btn-sm btn-outline-primary" title="Editar producto">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                            <a href="{% url 'admin_eliminar' prod.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar producto" onclick="return confirm('¿Seguro que deseas eliminar {{ prod.nombre }}? Esta acción no se puede deshacer.');">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        No hay productos registrados en el inventario. Haz clic en "Agregar Nuevo Producto" para comenzar.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

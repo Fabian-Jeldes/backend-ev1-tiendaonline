@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ titulo }} | TechStore{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        
+        <div class="mb-3">
+            <a href="{% url 'admin_panel' %}" class="btn btn-link text-decoration-none ps-0">
+                <i class="bi bi-arrow-left me-1"></i> Volver al Panel de Administración
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+            
+            <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-3 me-3 fs-3">
+                    {% if producto %}
+                        <i class="bi bi-pencil-square"></i>
+                    {% else %}
+                        <i class="bi bi-plus-circle"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0 text-dark">{{ titulo }}</h2>
+                    <p class="text-muted small mb-0">Completa los campos para {% if producto %}actualizar{% else %}incorporar{% endif %} este artículo en la tienda.</p>
+                </div>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <!-- NOMBRE DEL PRODUCTO -->
+                    <div class="col-md-8">
+                        <label for="nombre" class="form-label fw-semibold">Nombre del Producto <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="nombre" name="nombre" 
+                               value="{{ producto.nombre|default:'' }}" placeholder="Ej: Teclado Mecánico RGB" required>
+                    </div>
+
+                    <!-- CATEGORÍA -->
+                    <div class="col-md-4">
+                        <label for="categoria" class="form-label fw-semibold">Categoría <span class="text-danger">*</span></label>
+                        <select class="form-select form-select-lg" id="categoria" name="categoria" required>
+                            <option value="Computación" {% if producto.categoria == 'Computación' %}selected{% endif %}>Computación</option>
+                            <option value="Monitores" {% if producto.categoria == 'Monitores' %}selected{% endif %}>Monitores</option>
+                            <option value="Periféricos" {% if producto.categoria == 'Periféricos' %}selected{% endif %}>Periféricos</option>
+                            <option value="Audio" {% if producto.categoria == 'Audio' %}selected{% endif %}>Audio</option>
+                            <option value="Accesorios" {% if producto.categoria == 'Accesorios' %}selected{% endif %}>Accesorios</option>
+                            <option value="Videojuegos" {% if producto.categoria == 'Videojuegos' %}selected{% endif %}>Videojuegos</option>
+                        </select>
+                    </div>
+
+                    <!-- PRECIO CLP -->
+                    <div class="col-md-6">
+                        <label for="precio" class="form-label fw-semibold">Precio Normal (CLP $) <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="precio" name="precio" min="0" step="1000"
+                                   value="{{ producto.precio|default:'99990' }}" required>
+                        </div>
+                        <small class="text-muted">Valor entero en pesos chilenos.</small>
+                    </div>
+
+                    <!-- STOCK DISPONIBLE -->
+                    <div class="col-md-6">
+                        <label for="stock" class="form-label fw-semibold">Stock Inicial / Inventario <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text"><i class="bi bi-box"></i></span>
+                            <input type="number" class="form-control" id="stock" name="stock" min="0"
+                                   value="{{ producto.stock|default:'10' }}" required>
+                        </div>
+                        <small class="text-muted">Cantidad de unidades físicas disponibles.</small>
+                    </div>
+
+                    <!-- SWITCH DE OFERTA Y DESCUENTO -->
+                    <div class="col-12">
+                        <div class="card p-3 bg-light border-0 rounded-3">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch fs-5">
+                                        <input class="form-check-input" type="checkbox" id="oferta" name="oferta" 
+                                               {% if producto.oferta %}checked{% endif %} onchange="toggleDescuento()">
+                                        <label class="form-check-label fs-6 fw-bold" for="oferta">
+                                            ¿Publicar en Oferta / Descuento?
+                                        </label>
+                                    </div>
+                                    <small class="text-muted d-block">Destaca el producto en la portada y aplica precio rebajado.</small>
+                                </div>
+                                <div class="col-md-6 mt-2 mt-md-0">
+                                    <label for="descuento" class="form-label fw-semibold">Porcentaje de Descuento (%)</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="descuento" name="descuento" min="0" max="90"
+                                               value="{{ producto.descuento|default:'0' }}">
+                                        <span class="input-group-text">% OFF</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- URL DE LA IMAGEN -->
+                    <div class="col-12">
+                        <label for="imagen" class="form-label fw-semibold">URL de la Imagen <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-image"></i></span>
+                            <input type="url" class="form-control" id="imagen" name="imagen" 
+                                   value="{{ producto.imagen|default:'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80' }}" 
+                                   placeholder="https://..." required oninput="actualizarPreview()">
+                        </div>
+                        <div class="mt-2 text-center">
+                            <img id="imgPreview" src="{{ producto.imagen|default:'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80' }}" 
+                                 alt="Vista previa" class="rounded-3 shadow-sm border" style="max-height: 140px; object-fit: cover;">
+                        </div>
+                    </div>
+
+                    <!-- DESCRIPCIÓN -->
+                    <div class="col-12">
+                        <label for="descripcion" class="form-label fw-semibold">Descripción Detallada <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" 
+                                  placeholder="Especificaciones técnicas, características y detalles del producto..." required>{{ producto.descripcion|default:'' }}</textarea>
+                    </div>
+
+                    <!-- BOTONES DE ACCIÓN -->
+                    <div class="col-12 d-flex gap-3 pt-3 border-top mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-semibold flex-grow-1">
+                            <i class="bi bi-check2-circle me-1"></i> {{ accion }}
+                        </button>
+                        <a href="{% url 'admin_panel' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                            Cancelar
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleDescuento() {
+    const chk = document.getElementById('oferta');
+    const descInput = document.getElementById('descuento');
+    if (!chk.checked) {
+        descInput.value = 0;
+    } else if (descInput.value == 0) {
+        descInput.value = 15;
+    }
+}
+function actualizarPreview() {
+    const url = document.getElementById('imagen').value;
+    const img = document.getElementById('imgPreview');
+    if (url) {
+        img.src = url;
+    }
+}
+</script>
+{% endblock %}

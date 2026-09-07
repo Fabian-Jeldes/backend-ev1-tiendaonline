@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "nombre": "Notebook Gamer ASUS ROG X Strix",
+    "categoria": "Computación",
+    "precio": 1295000,
+    "descripcion": "Potente notebook con procesador AMD Ryzen 7, 16GB RAM, 1TB SSD y tarjeta gráfica NVIDIA GeForce RTX 4060 para gaming y desarrollo de alto rendimiento.",
+    "imagen": "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=600&q=80",
+    "stock": 15,
+    "oferta": true,
+    "descuento": 10
+  },
+  {
+    "id": 2,
+    "nombre": "Monitor Curvo Samsung Odyssey 27\"",
+    "categoria": "Monitores",
+    "precio": 249990,
+    "descripcion": "Monitor curvo 1000R con resolución QHD, tasa de refresco de 144Hz y tiempo de respuesta de 1ms. Ideal para programación y productividad.",
+    "imagen": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80",
+    "stock": 8,
+    "oferta": false,
+    "descuento": 0
+  },
+  {
+    "id": 3,
+    "nombre": "Teclado Mecánico Inalámbrico Keychron K2",
+    "categoria": "Periféricos",
+    "precio": 99990,
+    "descripcion": "Teclado mecánico compacto con switches Gateron Brown, retroiluminación RGB, conectividad Bluetooth 5.1 y USB-C. Compatible con Mac y Windows.",
+    "imagen": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+    "stock": 12,
+    "oferta": true,
+    "descuento": 20
+  },
+  {
+    "id": 4,
+    "nombre": "Auriculares Inalámbricos Sony WH-1000XM5",
+    "categoria": "Audio",
+    "precio": 328000,
+    "descripcion": "Audífonos con cancelación activa de ruido líder en la industria, audio de alta resolución y hasta 30 horas de batería continua con carga rápida.",
+    "imagen": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+    "stock": 10,
+    "oferta": false,
+    "descuento": 0
+  }
+]

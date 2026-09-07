@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio | TechStore - Tienda Online de Tecnología{% endblock %}
+
+{% block contenido %}
+<!-- HERO BANNER PRINCIPAL -->
+<div class="p-5 mb-5 bg-primary bg-gradient text-white rounded-4 shadow">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3">
+                <i class="bi bi-stars me-1"></i> Especial de Tecnología 2026
+            </span>
+            <h1 class="display-4 fw-bold lh-1 mb-3">Tu próxima actualización tecnológica está aquí.</h1>
+            <p class="lead mb-4 opacity-75">
+                Encuentra el hardware, periféricos y accesorios de última generación con los mejores precios y despacho rápido a todo el país.
+            </p>
+            <div class="d-flex flex-wrap gap-3">
+                <!-- Enlace hacia App Productos -->
+                <a href="{% url 'catalogo' %}" class="btn btn-light btn-lg px-4 rounded-pill fw-bold text-primary shadow-sm">
+                    <i class="bi bi-bag-fill me-1"></i> Ver Catálogo Completo
+                </a>
+                <!-- Enlace hacia App Administracion -->
+                <a href="{% url 'admin_panel' %}" class="btn btn-outline-light btn-lg px-4 rounded-pill fw-semibold">
+                    <i class="bi bi-gear-fill me-1"></i> Panel Admin
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-5 text-center d-none d-lg-block">
+            <img src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=600&q=80" 
+                 alt="Hardware Tech" class="img-fluid rounded-4 shadow-lg border border-2 border-white" style="max-height: 280px; object-fit: cover;">
+        </div>
+    </div>
+</div>
+
+<!-- VENTAJAS / CARACTERÍSTICAS -->
+<div class="row g-4 mb-5 text-center">
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+            <div class="text-primary fs-1 mb-2"><i class="bi bi-truck"></i></div>
+            <h5 class="fw-bold">Envíos Rápidos</h5>
+            <p class="text-muted small mb-0">Despacho en 24 a 48 horas hábiles para todo el territorio nacional.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+            <div class="text-primary fs-1 mb-2"><i class="bi bi-shield-check"></i></div>
+            <h5 class="fw-bold">Garantía Oficial</h5>
+            <p class="text-muted small mb-0">Todos nuestros productos cuentan con garantía legal y servicio técnico.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="p-4 bg-white rounded-4 shadow-sm h-100 border">
+            <div class="text-primary fs-1 mb-2"><i class="bi bi-gear-wide-connected"></i></div>
+            <h5 class="fw-bold">Gestión en Vivo</h5>
+            <p class="text-muted small mb-0">Panel administrativo para control de stock, precios y ofertas en tiempo real.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SECCIÓN: OFERTAS DESTACADAS -->
+<div class="mb-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-fire text-danger me-2"></i>Ofertas Imperdibles</h2>
+            <p class="text-muted mb-0">Productos con descuentos por tiempo limitado y stock en tiempo real.</p>
+        </div>
+        <a href="{% url 'catalogo' %}" class="btn btn-outline-primary rounded-pill btn-sm px-3">
+            Ver Todos <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    <div class="row g-4">
+        {% for prod in destacados %}
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100 bg-white">
+                <div class="row g-0 h-100">
+                    <div class="col-sm-5 bg-light position-relative">
+                        <img src="{{ prod.imagen }}" class="img-fluid h-100 w-100" alt="{{ prod.nombre }}" style="object-fit: cover; min-height: 180px;">
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2 rounded-pill shadow-sm">
+                            -{{ prod.descuento }}% OFF
+                        </span>
+                    </div>
+                    <div class="col-sm-7 p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge bg-light text-secondary border small">{{ prod.categoria }}</span>
+                                <div data-stock-producto-id="{{ prod.id }}" data-stock-total="{{ prod.stock }}">
+                                    {% if prod.stock > 0 %}
+                                        <small class="text-success fw-bold">Stock: {{ prod.stock }}</small>
+                                    {% else %}
+                                        <small class="text-danger fw-bold">Agotado</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <h5 class="fw-bold mb-1 text-truncate" title="{{ prod.nombre }}">{{ prod.nombre }}</h5>
+                            <p class="text-muted small mb-2">{{ prod.descripcion|truncatewords:10 }}</p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top gap-2 flex-wrap">
+                            <div>
+                                <span class="text-decoration-line-through text-muted small me-1">{{ prod.precio_formateado }}</span>
+                                <span class="fs-5 fw-bold text-primary">{{ prod.precio_final_formateado }}</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-primary rounded-pill px-3 btn-agregar-carrito"
+                                        type="button"
+                                        data-btn-producto-id="{{ prod.id }}"
+                                        data-nombre="{{ prod.nombre }}"
+                                        data-precio="{{ prod.precio_final }}"
+                                        data-stock-total="{{ prod.stock }}"
+                                        data-imagen="{{ prod.imagen }}"
+                                        {% if prod.stock <= 0 %}disabled{% endif %}>
+                                    <i class="bi bi-cart-plus me-1"></i> Agregar
+                                </button>
+                                <a href="{% url 'detalle_producto' prod.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                    Detalle
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block titulo %}{{ producto.nombre }} | Detalle TechStore{% endblock %}
+
+{% block contenido %}
+<div class="mb-3">
+    <a href="{% url 'catalogo' %}" class="btn btn-link text-decoration-none ps-0">
+        <i class="bi bi-arrow-left me-1"></i> Volver al Catálogo de Productos
+    </a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-5">
+    <div class="row g-0">
+        <!-- COLUMNA IZQUIERDA: IMAGEN DEL PRODUCTO -->
+        <div class="col-md-6 bg-light d-flex align-items-center justify-content-center p-4">
+            <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}" class="img-fluid imagen-detalle shadow-sm">
+        </div>
+
+        <!-- COLUMNA DERECHA: INFORMACIÓN Y DETALLES -->
+        <div class="col-md-6 p-4 p-lg-5 d-flex flex-column">
+            
+            <div class="mb-2">
+                <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-1 rounded-pill">
+                    {{ producto.categoria }}
+                </span>
+                <span class="text-muted small ms-2">Código SKU: #00{{ producto.id }}</span>
+            </div>
+
+            <h1 class="h2 fw-bold text-dark mb-3">{{ producto.nombre }}</h1>
+
+            <!-- SECCIÓN DE PRECIOS CON OPERADORES Y DESCUENTOS -->
+            <div class="bg-light p-3 rounded-3 mb-4">
+                {% if tiene_descuento %}
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="text-decoration-line-through text-muted fs-5">{{ precio_original_formateado }}</span>
+                        <span class="badge bg-danger rounded-pill">-{{ producto.descuento }}% OFF</span>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2">
+                        <span class="display-6 fw-bold text-primary">{{ precio_final_formateado }}</span>
+                        <small class="text-success fw-semibold">(Ahorras: {{ monto_ahorro_formateado }})</small>
+                    </div>
+                {% else %}
+                    <div class="display-6 fw-bold text-primary">{{ precio_original_formateado }}</div>
+                {% endif %}
+            </div>
+
+            <!-- DESCRIPCIÓN DEL PRODUCTO -->
+            <div class="mb-4">
+                <h5 class="fw-bold text-secondary">Descripción</h5>
+                <p class="text-muted leading-relaxed">{{ producto.descripcion }}</p>
+            </div>
+
+            <!-- DISPONIBILIDAD DE STOCK (ESTRUCTURA DE DECISIÓN) -->
+            <div class="mb-4">
+                <div data-stock-producto-id="{{ producto.id }}" data-stock-total="{{ producto.stock }}">
+                    {% if disponible %}
+                        <div class="alert alert-success d-flex align-items-center rounded-3 mb-0" role="alert">
+                            <i class="bi bi-check-circle-fill fs-5 me-2"></i>
+                            <div>
+                                <strong>{{ mensaje_stock }}</strong>
+                                <div class="small">Envío disponible a todo Chile dentro de 24 a 48 horas.</div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning d-flex align-items-center rounded-3 mb-0" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill fs-5 me-2"></i>
+                            <div>
+                                <strong>{{ mensaje_stock }}</strong>
+                                <div class="small">Producto sin stock actualmente.</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <div class="mt-auto pt-3 border-top d-flex gap-3 flex-wrap">
+                <button class="btn btn-primary btn-lg flex-grow-1 rounded-pill fw-semibold btn-agregar-carrito"
+                        type="button"
+                        data-btn-producto-id="{{ producto.id }}"
+                        data-nombre="{{ producto.nombre }}"
+                        data-precio="{{ precio_final }}"
+                        data-stock-total="{{ producto.stock }}"
+                        data-imagen="{{ producto.imagen }}"
+                        {% if not disponible %}disabled{% endif %}>
+                    {% if disponible %}
+                        <i class="bi bi-cart-plus me-1"></i> Agregar al Carrito
+                    {% else %}
+                        <i class="bi bi-slash-circle me-1"></i> Agotado
+                    {% endif %}
+                </button>
+                <a href="{% url 'catalogo' %}" class="btn btn-outline-secondary btn-lg rounded-pill">
+                    Seguir Comprando
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

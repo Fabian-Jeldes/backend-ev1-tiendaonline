@@ -1,0 +1,64 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --color-primario: #0d6efd;
+    --color-secundario: #6c757d;
+    --color-acento: #ff6b35;
+    --color-fondo: #f8f9fa;
+}
+
+body {
+    background-color: var(--color-fondo);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.navbar-brand-text {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.tarjeta-producto {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.tarjeta-producto:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.badge-descuento {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: var(--color-acento);
+    color: white;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+.imagen-detalle {
+    max-height: 380px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.hover-white {
+    transition: color 0.2s ease;
+}
+
+.hover-white:hover {
+    color: #ffffff !important;
+}
