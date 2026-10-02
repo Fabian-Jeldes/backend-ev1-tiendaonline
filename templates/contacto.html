@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Contacto & Soporte Técnico | TechStore{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center mb-5">
+    <div class="col-lg-11">
+        
+        <!-- ENCABEZADO -->
+        <div class="text-center mb-5">
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-2 rounded-pill fw-semibold mb-2">
+                <i class="bi bi-headset me-1"></i> Atención al Cliente & Ventas
+            </span>
+            <h1 class="display-6 fw-bold text-dark mb-2">Contáctanos</h1>
+            <p class="text-muted lead mb-0 mx-auto" style="max-width: 650px;">
+                ¿Tienes dudas sobre un producto, cotizaciones corporativas o necesitas soporte técnico? Déjanos tu mensaje y te responderemos a la brevedad.
+            </p>
+        </div>
+
+        <div class="row g-4 align-items-stretch">
+            
+            <!-- COLUMNA IZQUIERDA: FORMULARIO DE CONTACTO (CRITERIO 2.1.1 Y 2.1.4) -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white h-100">
+                    <h3 class="fw-bold mb-1 text-dark">Envíanos un mensaje</h3>
+                    <p class="text-muted small mb-4">Todos los campos marcados con (<span class="text-danger">*</span>) son obligatorios.</p>
+
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger rounded-3 mb-3">
+                            {% for error in form.non_field_errors %}
+                                <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="row g-3">
+                            <!-- NOMBRE COMPLETO -->
+                            <div class="col-md-6">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold">
+                                    Nombre Completo <span class="text-danger">*</span>
+                                </label>
+                                {{ form.nombre }}
+                                {% if form.nombre.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.nombre.errors %}
+                                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- CORREO ELECTRÓNICO -->
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">
+                                    Correo Electrónico <span class="text-danger">*</span>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.email.errors %}
+                                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- TELÉFONO -->
+                            <div class="col-md-6">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label fw-semibold">
+                                    Teléfono Móvil
+                                </label>
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.telefono.errors %}
+                                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <small class="text-muted">Opcional (Ej: +56 9 1234 5678).</small>
+                                {% endif %}
+                            </div>
+
+                            <!-- ASUNTO -->
+                            <div class="col-md-6">
+                                <label for="{{ form.asunto.id_for_label }}" class="form-label fw-semibold">
+                                    Asunto <span class="text-danger">*</span>
+                                </label>
+                                {{ form.asunto }}
+                                {% if form.asunto.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.asunto.errors %}
+                                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- MENSAJE -->
+                            <div class="col-12">
+                                <label for="{{ form.mensaje.id_for_label }}" class="form-label fw-semibold">
+                                    Mensaje o Consulta <span class="text-danger">*</span>
+                                </label>
+                                {{ form.mensaje }}
+                                {% if form.mensaje.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.mensaje.errors %}
+                                            <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <small class="text-muted">Mínimo 10 caracteres explicativos.</small>
+                                {% endif %}
+                            </div>
+
+                            <!-- BOTÓN DE ENVÍO -->
+                            <div class="col-12 pt-3">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-semibold w-100 shadow-sm">
+                                    <i class="bi bi-send-fill me-2"></i> Enviar Mensaje
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: INFORMACIÓN CORPORATIVA Y HORARIOS -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-dark text-white h-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <h4 class="fw-bold mb-4 text-white">Información de Contacto</h4>
+                        
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="rounded-circle bg-primary bg-opacity-25 text-primary p-3 me-3 fs-5">
+                                <i class="bi bi-geo-alt-fill text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">Dirección Principal</h6>
+                                <p class="text-secondary small mb-0">Av. Apoquindo 4500, Piso 3, Las Condes, Santiago de Chile.</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="rounded-circle bg-primary bg-opacity-25 text-primary p-3 me-3 fs-5">
+                                <i class="bi bi-envelope-fill text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">Correo Electrónico</h6>
+                                <p class="text-secondary small mb-0">contacto@techstore.cl<br>soporte@techstore.cl</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="rounded-circle bg-primary bg-opacity-25 text-primary p-3 me-3 fs-5">
+                                <i class="bi bi-telephone-fill text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">Teléfonos de Atención</h6>
+                                <p class="text-secondary small mb-0">+56 2 2987 6543<br>+56 9 8765 4321 (WhatsApp)</p>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-start mb-4">
+                            <div class="rounded-circle bg-primary bg-opacity-25 text-primary p-3 me-3 fs-5">
+                                <i class="bi bi-clock-fill text-white"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">Horario de Soporte</h6>
+                                <p class="text-secondary small mb-0">Lunes a Viernes: 09:00 a 18:30 hrs.<br>Sábados: 10:00 a 14:00 hrs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3 rounded-3 bg-secondary bg-opacity-10 border border-secondary border-opacity-25 mt-3">
+                        <small class="text-secondary d-block">
+                            <i class="bi bi-shield-check text-success me-1"></i> Tus consultas quedan almacenadas de manera segura en nuestra base de datos SQLite y son auditadas por el equipo de administración.
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

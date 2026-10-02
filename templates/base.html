@@ -43,7 +43,13 @@
                             <i class="bi bi-grid me-1"></i> Catálogo
                         </a>
                     </li>
-                    <!-- Ruta 3: Panel de Administración CRUD (App Administracion) -->
+                    <!-- Ruta 3: Contacto (Formulario y Soporte) -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contacto' %}active fw-bold text-white{% endif %}" href="{% url 'contacto' %}">
+                            <i class="bi bi-envelope me-1"></i> Contacto
+                        </a>
+                    </li>
+                    <!-- Ruta 4: Panel de Administración CRUD (App Administracion) -->
                     <li class="nav-item">
                         <a class="nav-link {% if 'admin' in request.resolver_match.url_name %}active fw-bold text-white{% endif %}" href="{% url 'admin_panel' %}">
                             <i class="bi bi-shield-lock me-1"></i> Admin Productos
@@ -136,6 +142,7 @@
                     <ul class="list-unstyled mb-0 small">
                         <li class="mb-2"><a href="{% url 'inicio' %}" class="text-secondary text-decoration-none hover-white"><i class="bi bi-chevron-right me-1 small"></i>Inicio</a></li>
                         <li class="mb-2"><a href="{% url 'catalogo' %}" class="text-secondary text-decoration-none hover-white"><i class="bi bi-chevron-right me-1 small"></i>Catálogo</a></li>
+                        <li class="mb-2"><a href="{% url 'contacto' %}" class="text-secondary text-decoration-none hover-white"><i class="bi bi-chevron-right me-1 small"></i>Contacto</a></li>
                         <li class="mb-2"><a href="{% url 'admin_panel' %}" class="text-secondary text-decoration-none hover-white"><i class="bi bi-chevron-right me-1 small"></i>Admin CRUD</a></li>
                         <li class="mb-2"><a href="{% url 'admin_nuevo' %}" class="text-secondary text-decoration-none hover-white"><i class="bi bi-chevron-right me-1 small"></i>Nuevo Producto</a></li>
                         <li class="mb-2">
@@ -197,7 +204,7 @@
                             &copy; 2026 <strong>TechStore Chile</strong>. Todos los derechos reservados.
                         </p>
                         <p class="text-secondary opacity-75 small mb-0">
-                            Evaluación Sumativa 1 - Programación Backend (TI3V41) | Docente: Claudio Rubilar Cid | INACAP Sede Apoquindo
+                            Evaluación Sumativa 2 - Programación Backend (TI3V41) | Docente: Claudio Rubilar Cid | INACAP Sede Apoquindo
                         </p>
                     </div>
                     <div class="col-md-5 text-center text-md-end">

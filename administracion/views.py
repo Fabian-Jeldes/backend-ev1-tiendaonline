@@ -1,29 +1,19 @@
-from django.shortcuts import render, redirect, Http404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from productos.datos import (
-    obtener_productos,
-    obtener_producto_por_id,
-    crear_producto,
-    actualizar_producto,
-    eliminar_producto,
-    formato_clp,
-)
+from productos.models import Producto
+from .forms import ProductoForm
 
 def panel(request):
     """
     Vista principal del Panel de Administración (READ del CRUD).
-    Lista todos los productos, su stock, precios y estado.
+    Lista todos los productos desde la base de datos SQLite con sus métricas.
     """
-    productos = obtener_productos()
-    
-    # Añadimos formato CLP para visualización en la tabla
-    for p in productos:
-        p['precio_formateado'] = formato_clp(p['precio'])
+    productos = Producto.objects.all()
 
-    # Estadísticas para el resumen administrativo
-    total_productos = len(productos)
-    agotados = len([p for p in productos if p['stock'] <= 0])
-    en_oferta = len([p for p in productos if p['oferta']])
+    # Métricas calculadas con consultas del ORM de Django
+    total_productos = productos.count()
+    agotados = productos.filter(stock__lte=0).count()
+    en_oferta = productos.filter(oferta=True).count()
 
     contexto = {
         'titulo': 'Panel de Administración de Productos',
@@ -38,31 +28,23 @@ def panel(request):
 def nuevo_producto(request):
     """
     Vista para crear un nuevo producto (CREATE del CRUD).
-    Gestiona el método GET para mostrar el formulario y POST para persistir los datos.
+    Utiliza ProductoForm (ModelForm) con validaciones personalizadas.
     """
     if request.method == 'POST':
-        datos = {
-            'nombre': request.POST.get('nombre', '').strip(),
-            'categoria': request.POST.get('categoria', 'Tecnología').strip(),
-            'precio': request.POST.get('precio', 0),
-            'descripcion': request.POST.get('descripcion', '').strip(),
-            'imagen': request.POST.get('imagen', '').strip(),
-            'stock': request.POST.get('stock', 0),
-            'oferta': 'oferta' in request.POST,
-            'descuento': request.POST.get('descuento', 0) if 'oferta' in request.POST else 0,
-        }
-        
-        # Validamos que al menos tenga nombre y precio
-        if datos['nombre'] and int(datos['precio']) >= 0:
-            nuevo = crear_producto(datos)
-            messages.success(request, f"¡Producto '{nuevo['nombre']}' agregado con éxito!")
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            producto = form.save()
+            messages.success(request, f"¡Producto '{producto.nombre}' agregado con éxito a la base de datos!")
             return redirect('admin_panel')
         else:
-            messages.error(request, "Por favor completa todos los campos requeridos con valores válidos.")
+            messages.error(request, "Por favor corrige los errores señalados en el formulario.")
+    else:
+        form = ProductoForm()
 
     contexto = {
         'titulo': 'Agregar Nuevo Producto',
-        'accion': 'Crear',
+        'accion': 'Crear Producto',
+        'form': form,
         'producto': None,
     }
     return render(request, 'administracion/formulario.html', contexto)
@@ -71,34 +53,25 @@ def nuevo_producto(request):
 def editar_producto(request, id):
     """
     Vista para modificar un producto existente (UPDATE del CRUD).
-    Carga los datos actuales en el formulario y guarda los cambios vía POST.
+    Carga la instancia actual en el ModelForm y persiste los cambios.
     """
-    producto = obtener_producto_por_id(id)
-    if not producto:
-        raise Http404(f"El producto con ID {id} no existe.")
+    producto = get_object_or_404(Producto, pk=id)
 
     if request.method == 'POST':
-        datos = {
-            'nombre': request.POST.get('nombre', '').strip(),
-            'categoria': request.POST.get('categoria', '').strip(),
-            'precio': request.POST.get('precio', 0),
-            'descripcion': request.POST.get('descripcion', '').strip(),
-            'imagen': request.POST.get('imagen', '').strip(),
-            'stock': request.POST.get('stock', 0),
-            'oferta': 'oferta' in request.POST,
-            'descuento': request.POST.get('descuento', 0) if 'oferta' in request.POST else 0,
-        }
-        
-        if datos['nombre']:
-            actualizar_producto(id, datos)
-            messages.success(request, f"¡Producto '{datos['nombre']}' actualizado correctamente!")
+        form = ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"¡Producto '{producto.nombre}' actualizado correctamente en la base de datos!")
             return redirect('admin_panel')
         else:
-            messages.error(request, "El nombre del producto no puede quedar vacío.")
+            messages.error(request, "Por favor corrige los errores señalados en el formulario.")
+    else:
+        form = ProductoForm(instance=producto)
 
     contexto = {
-        'titulo': f"Editar Producto: {producto['nombre']}",
+        'titulo': f"Editar Producto: {producto.nombre}",
         'accion': 'Guardar Cambios',
+        'form': form,
         'producto': producto,
     }
     return render(request, 'administracion/formulario.html', contexto)
@@ -106,14 +79,10 @@ def editar_producto(request, id):
 
 def eliminar_producto_view(request, id):
     """
-    Vista para eliminar un producto (DELETE del CRUD).
+    Vista para eliminar un producto de la base de datos (DELETE del CRUD).
     """
-    producto = obtener_producto_por_id(id)
-    if producto:
-        nombre = producto['nombre']
-        eliminar_producto(id)
-        messages.success(request, f"El producto '{nombre}' ha sido eliminado.")
-    else:
-        messages.error(request, "El producto que intentas eliminar no fue encontrado.")
-        
+    producto = get_object_or_404(Producto, pk=id)
+    nombre = producto.nombre
+    producto.delete()
+    messages.success(request, f"El producto '{nombre}' ha sido eliminado de la base de datos.")
     return redirect('admin_panel')

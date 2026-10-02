@@ -24,54 +24,94 @@
                 </div>
                 <div>
                     <h2 class="fw-bold mb-0 text-dark">{{ titulo }}</h2>
-                    <p class="text-muted small mb-0">Completa los campos para {% if producto %}actualizar{% else %}incorporar{% endif %} este artículo en la tienda.</p>
+                    <p class="text-muted small mb-0">Completa los campos para {% if producto %}actualizar{% else %}incorporar{% endif %} este artículo en la base de datos SQLite.</p>
                 </div>
             </div>
 
-            <form method="POST">
+            <!-- Formulario Django con ModelForm y Validaciones Personalizadas (Criterio 2.1.3 y 2.1.4) -->
+            <form method="POST" novalidate>
                 {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger rounded-3 mb-4 shadow-sm" role="alert">
+                    {% for error in form.non_field_errors %}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                            <span>{{ error }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
 
                 <div class="row g-3">
                     <!-- NOMBRE DEL PRODUCTO -->
                     <div class="col-md-8">
-                        <label for="nombre" class="form-label fw-semibold">Nombre del Producto <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-lg" id="nombre" name="nombre" 
-                               value="{{ producto.nombre|default:'' }}" placeholder="Ej: Teclado Mecánico RGB" required>
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label fw-semibold">
+                            Nombre del Producto <span class="text-danger">*</span>
+                        </label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.nombre.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <!-- CATEGORÍA -->
                     <div class="col-md-4">
-                        <label for="categoria" class="form-label fw-semibold">Categoría <span class="text-danger">*</span></label>
-                        <select class="form-select form-select-lg" id="categoria" name="categoria" required>
-                            <option value="Computación" {% if producto.categoria == 'Computación' %}selected{% endif %}>Computación</option>
-                            <option value="Monitores" {% if producto.categoria == 'Monitores' %}selected{% endif %}>Monitores</option>
-                            <option value="Periféricos" {% if producto.categoria == 'Periféricos' %}selected{% endif %}>Periféricos</option>
-                            <option value="Audio" {% if producto.categoria == 'Audio' %}selected{% endif %}>Audio</option>
-                            <option value="Accesorios" {% if producto.categoria == 'Accesorios' %}selected{% endif %}>Accesorios</option>
-                            <option value="Videojuegos" {% if producto.categoria == 'Videojuegos' %}selected{% endif %}>Videojuegos</option>
-                        </select>
+                        <label for="{{ form.categoria.id_for_label }}" class="form-label fw-semibold">
+                            Categoría <span class="text-danger">*</span>
+                        </label>
+                        {{ form.categoria }}
+                        {% if form.categoria.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.categoria.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <!-- PRECIO CLP -->
                     <div class="col-md-6">
-                        <label for="precio" class="form-label fw-semibold">Precio Normal (CLP $) <span class="text-danger">*</span></label>
+                        <label for="{{ form.precio.id_for_label }}" class="form-label fw-semibold">
+                            Precio Normal (CLP $) <span class="text-danger">*</span>
+                        </label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" id="precio" name="precio" min="0" step="1000"
-                                   value="{{ producto.precio|default:'99990' }}" required>
+                            {{ form.precio }}
                         </div>
-                        <small class="text-muted">Valor entero en pesos chilenos.</small>
+                        {% if form.precio.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.precio.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Valor entero en pesos chilenos (mínimo $500).</small>
+                        {% endif %}
                     </div>
 
                     <!-- STOCK DISPONIBLE -->
                     <div class="col-md-6">
-                        <label for="stock" class="form-label fw-semibold">Stock Inicial / Inventario <span class="text-danger">*</span></label>
+                        <label for="{{ form.stock.id_for_label }}" class="form-label fw-semibold">
+                            Stock Inicial / Inventario <span class="text-danger">*</span>
+                        </label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-text"><i class="bi bi-box"></i></span>
-                            <input type="number" class="form-control" id="stock" name="stock" min="0"
-                                   value="{{ producto.stock|default:'10' }}" required>
+                            {{ form.stock }}
                         </div>
-                        <small class="text-muted">Cantidad de unidades físicas disponibles.</small>
+                        {% if form.stock.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.stock.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Cantidad de unidades físicas disponibles (no negativo).</small>
+                        {% endif %}
                     </div>
 
                     <!-- SWITCH DE OFERTA Y DESCUENTO -->
@@ -80,8 +120,7 @@
                             <div class="row align-items-center">
                                 <div class="col-md-6">
                                     <div class="form-check form-switch fs-5">
-                                        <input class="form-check-input" type="checkbox" id="oferta" name="oferta" 
-                                               {% if producto.oferta %}checked{% endif %} onchange="toggleDescuento()">
+                                        {{ form.oferta }}
                                         <label class="form-check-label fs-6 fw-bold" for="oferta">
                                             ¿Publicar en Oferta / Descuento?
                                         </label>
@@ -91,10 +130,16 @@
                                 <div class="col-md-6 mt-2 mt-md-0">
                                     <label for="descuento" class="form-label fw-semibold">Porcentaje de Descuento (%)</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="descuento" name="descuento" min="0" max="90"
-                                               value="{{ producto.descuento|default:'0' }}">
+                                        {{ form.descuento }}
                                         <span class="input-group-text">% OFF</span>
                                     </div>
+                                    {% if form.descuento.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.descuento.errors %}
+                                                <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -102,24 +147,42 @@
 
                     <!-- URL DE LA IMAGEN -->
                     <div class="col-12">
-                        <label for="imagen" class="form-label fw-semibold">URL de la Imagen <span class="text-danger">*</span></label>
+                        <label for="imagen" class="form-label fw-semibold">
+                            URL de la Imagen <span class="text-danger">*</span>
+                        </label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-image"></i></span>
-                            <input type="url" class="form-control" id="imagen" name="imagen" 
-                                   value="{{ producto.imagen|default:'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80' }}" 
-                                   placeholder="https://..." required oninput="actualizarPreview()">
+                            {{ form.imagen }}
                         </div>
+                        {% if form.imagen.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.imagen.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                         <div class="mt-2 text-center">
-                            <img id="imgPreview" src="{{ producto.imagen|default:'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80' }}" 
+                            <img id="imgPreview" 
+                                 src="{{ form.imagen.value|default:'https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=600&q=80' }}" 
                                  alt="Vista previa" class="rounded-3 shadow-sm border" style="max-height: 140px; object-fit: cover;">
                         </div>
                     </div>
 
                     <!-- DESCRIPCIÓN -->
                     <div class="col-12">
-                        <label for="descripcion" class="form-label fw-semibold">Descripción Detallada <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4" 
-                                  placeholder="Especificaciones técnicas, características y detalles del producto..." required>{{ producto.descripcion|default:'' }}</textarea>
+                        <label for="{{ form.descripcion.id_for_label }}" class="form-label fw-semibold">
+                            Descripción Detallada <span class="text-danger">*</span>
+                        </label>
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.descripcion.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Mínimo 10 caracteres con características técnicas y comerciales.</small>
+                        {% endif %}
                     </div>
 
                     <!-- BOTONES DE ACCIÓN -->
@@ -151,7 +214,7 @@ function toggleDescuento() {
 function actualizarPreview() {
     const url = document.getElementById('imagen').value;
     const img = document.getElementById('imgPreview');
-    if (url) {
+    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
         img.src = url;
     }
 }
