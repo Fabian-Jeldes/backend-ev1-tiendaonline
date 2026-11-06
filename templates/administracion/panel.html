@@ -58,10 +58,16 @@
     </div>
 </div>
 
+<!-- BARRA DE FILTROS: misma plantilla parcial y misma lógica ORM que el catálogo público -->
+{% include 'productos/_filtros.html' %}
+
 <!-- TABLA CRUD DE PRODUCTOS -->
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
-    <div class="card-header bg-white py-3 border-0">
+    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0 text-secondary">Catálogo Actual de Inventario</h5>
+        {% if hay_filtros %}
+            <span class="badge bg-primary rounded-pill">{{ total_filtrados }} de {{ total_productos }} productos</span>
+        {% endif %}
     </div>
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
@@ -84,6 +90,7 @@
                     <td>
                         <div class="fw-bold text-dark">{{ prod.nombre }}</div>
                         <span class="badge bg-light text-secondary border small">{{ prod.categoria }}</span>
+                        {% if prod.marca %}<span class="badge bg-dark small">{{ prod.marca }}</span>{% endif %}
                         <span class="text-muted small ms-1">SKU #{{ prod.id }}</span>
                     </td>
                     <td>
@@ -119,7 +126,8 @@
                             <a href="{% url 'admin_editar' prod.id %}" class="btn btn-sm btn-outline-primary" title="Editar producto">
                                 <i class="bi bi-pencil-square"></i> Editar
                             </a>
-                            <a href="{% url 'admin_eliminar' prod.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar producto" onclick="return confirm('¿Seguro que deseas eliminar {{ prod.nombre }}? Esta acción no se puede deshacer.');">
+                            {# Este enlace solo ABRE la página de confirmación (GET); no borra nada. #}
+                            <a href="{% url 'admin_eliminar' prod.id %}" class="btn btn-sm btn-outline-danger" title="Eliminar producto">
                                 <i class="bi bi-trash"></i>
                             </a>
                         </div>
@@ -128,7 +136,11 @@
                 {% empty %}
                 <tr>
                     <td colspan="6" class="text-center py-5 text-muted">
-                        No hay productos registrados en el inventario. Haz clic en "Agregar Nuevo Producto" para comenzar.
+                        {% if hay_filtros %}
+                            Ningún producto coincide con los filtros. <a href="{{ request.path }}">Limpiar filtros</a>
+                        {% else %}
+                            No hay productos registrados en el inventario. Haz clic en "Agregar Nuevo Producto" para comenzar.
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

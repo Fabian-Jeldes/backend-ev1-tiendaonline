@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% comment %}
+=====================================================================
+ confirmar_eliminar.html — Paso 1 del DELETE: confirmación previa
+=====================================================================
+Esta página se muestra con GET y NO borra nada. El borrado ocurre solo
+cuando el usuario presiona "Sí, eliminar", que envía un formulario POST
+con el token CSRF a la misma URL (ver eliminar_producto_view).
+{% endcomment %}
+
+{% block titulo %}{{ titulo }} | TechStore{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+
+        <div class="mb-3">
+            <a href="{% url 'admin_panel' %}" class="btn btn-link text-decoration-none ps-0">
+                <i class="bi bi-arrow-left me-1"></i> Volver al Panel de Administración
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white border-top border-danger border-4">
+
+            <div class="d-flex align-items-center mb-4">
+                <div class="rounded-circle bg-danger bg-opacity-10 text-danger p-3 me-3 fs-3">
+                    <i class="bi bi-exclamation-octagon"></i>
+                </div>
+                <div>
+                    <h2 class="fw-bold mb-0 text-dark">¿Eliminar este producto?</h2>
+                    <p class="text-muted small mb-0">Se borrará de forma permanente de la base de datos MySQL. Esta acción no se puede deshacer.</p>
+                </div>
+            </div>
+
+            <!-- Resumen del producto a eliminar, para que el usuario confirme que es el correcto -->
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 mb-4">
+                <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}" class="rounded-3 border" style="width: 80px; height: 80px; object-fit: cover;">
+                <div>
+                    <div class="fw-bold text-dark">{{ producto.nombre }}</div>
+                    <span class="badge bg-light text-secondary border small">{{ producto.categoria }}</span>
+                    {% if producto.marca %}<span class="badge bg-dark small">{{ producto.marca }}</span>{% endif %}
+                    <div class="small text-muted mt-1">
+                        SKU #{{ producto.id }} · {{ producto.precio_formateado }} · {{ producto.stock }} unidades en stock
+                    </div>
+                </div>
+            </div>
+
+            {% comment %}
+                Formulario POST: es lo ÚNICO que borra el producto.
+                La etiqueta csrf_token agrega un campo oculto con un token secreto ligado
+                a la sesión. CsrfViewMiddleware lo compara al recibir el POST; si falta
+                o no coincide (petición desde otro sitio), responde 403 Forbidden.
+            {% endcomment %}
+            <form method="POST" action="{% url 'admin_eliminar' producto.id %}" class="d-flex flex-wrap justify-content-end gap-2">
+                {% csrf_token %}
+                <a href="{% url 'admin_panel' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="bi bi-x-lg me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger rounded-pill px-4">
+                    <i class="bi bi-trash me-1"></i> Sí, eliminar producto
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

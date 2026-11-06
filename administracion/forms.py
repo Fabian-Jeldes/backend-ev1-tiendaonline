@@ -1,6 +1,19 @@
-import re
+"""
+=====================================================================
+ administracion/forms.py — Formulario del CRUD de productos
+=====================================================================
+
+ProductoForm es un ModelForm: Django construye el formulario HTML a partir
+del modelo Producto y, al llamar form.save(), hace el INSERT o UPDATE en MySQL.
+
+Como "categoria" y "marca" ahora son ForeignKey, Django las convierte
+automáticamente en un <select> cuyas opciones son las filas de las tablas
+productos_categoria y productos_marca (ModelChoiceField).
+"""
+
 from django import forms
 from productos.models import Producto
+
 
 class ProductoForm(forms.ModelForm):
     class Meta:
@@ -8,6 +21,7 @@ class ProductoForm(forms.ModelForm):
         fields = [
             'nombre',
             'categoria',
+            'marca',
             'precio',
             'stock',
             'oferta',
@@ -22,6 +36,9 @@ class ProductoForm(forms.ModelForm):
             }),
             'categoria': forms.Select(attrs={
                 'class': 'form-select form-select-lg',
+            }),
+            'marca': forms.Select(attrs={
+                'class': 'form-select',
             }),
             'precio': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -77,13 +94,17 @@ class ProductoForm(forms.ModelForm):
             raise forms.ValidationError("Por seguridad, el nombre contiene caracteres no permitidos (<, >, {, }, ;, $).")
         return nombre
 
-    def clean_categoria(self):
-        """Validación personalizada: debe pertenecer a las categorías oficiales."""
-        categoria = self.cleaned_data.get('categoria', '').strip()
-        categorias_validas = [c[0] for c in Producto.CATEGORIAS]
-        if categoria not in categorias_validas:
-            raise forms.ValidationError(f"La categoría '{categoria}' no es válida. Elige una de la lista autorizada.")
-        return categoria
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Texto de la opción vacía de los <select>.
+        self.fields['categoria'].empty_label = "— Selecciona una categoría —"
+        self.fields['marca'].empty_label = "— Sin marca —"
+
+    # Nota: ya no se necesita clean_categoria().
+    # Antes había que comprobar a mano que el texto estuviera en la lista CATEGORIAS.
+    # Ahora el ModelChoiceField valida solo que el id enviado EXISTA en la tabla
+    # productos_categoria; si alguien manipula el HTML y envía un id falso,
+    # Django rechaza el formulario con "Escoja una opción válida".
 
     def clean_precio(self):
         """Validación personalizada: precio positivo y límites comerciales en CLP."""

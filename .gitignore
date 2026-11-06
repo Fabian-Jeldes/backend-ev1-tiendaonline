@@ -10,13 +10,13 @@ env/
 ENV/
 .venv/
 
-# Base de datos local (descomentar si no se desea subir la base SQLite)
-# *.sqlite3
-# db.sqlite3
+# Base de datos SQLite antigua (el proyecto ahora usa MySQL)
+*.sqlite3
 
 # Archivos de entorno y credenciales
 .env
 .env.*
+!.env.example
 *.local
 
 # Archivos de IDEs y editores

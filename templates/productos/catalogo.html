@@ -12,10 +12,17 @@
     </div>
     <div class="col-md-4 text-md-end mt-3 mt-md-0">
         <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
-            <i class="bi bi-box-seam me-1"></i> Total: {{ total_productos }} productos
+            {% if hay_filtros %}
+                <i class="bi bi-funnel-fill me-1"></i> {{ total_filtrados }} de {{ total_productos }} productos
+            {% else %}
+                <i class="bi bi-box-seam me-1"></i> Total: {{ total_productos }} productos
+            {% endif %}
         </span>
     </div>
 </div>
+
+<!-- BARRA DE FILTROS (GET): ver templates/productos/_filtros.html y productos/filtros.py -->
+{% include 'productos/_filtros.html' %}
 
 <!-- GRILLA DE PRODUCTOS -->
 <div class="row g-4">
@@ -104,7 +111,13 @@
     </div>
     {% empty %}
     <div class="col-12 text-center py-5">
-        <p class="lead text-muted">No hay productos disponibles en el catálogo.</p>
+        {% if hay_filtros %}
+            <i class="bi bi-search display-5 text-muted"></i>
+            <p class="lead text-muted mt-3 mb-2">Ningún producto coincide con los filtros aplicados.</p>
+            <a href="{{ request.path }}" class="btn btn-outline-primary rounded-pill">Ver todo el catálogo</a>
+        {% else %}
+            <p class="lead text-muted">No hay productos disponibles en el catálogo.</p>
+        {% endif %}
     </div>
     {% endfor %}
 </div>

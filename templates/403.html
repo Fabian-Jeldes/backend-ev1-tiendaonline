@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% comment %}
+ 403.html — Página "Acceso denegado".
+ Django la muestra automáticamente cuando una vista lanza PermissionDenied,
+ por ejemplo @permission_required(..., raise_exception=True) cuando el usuario
+ inició sesión pero no tiene el permiso necesario.
+{% endcomment %}
+
+{% block titulo %}Acceso denegado | TechStore{% endblock %}
+
+{% block contenido %}
+<div class="text-center py-5">
+    <i class="bi bi-shield-x display-1 text-danger"></i>
+    <h1 class="fw-bold mt-3">403 · Acceso denegado</h1>
+    <p class="lead text-muted">Tu usuario no tiene permiso para realizar esta acción.</p>
+    <div class="d-flex justify-content-center gap-2 mt-4">
+        {% if user.is_authenticated %}
+            <a href="{% url 'perfil' %}" class="btn btn-outline-secondary rounded-pill px-4">Ver mis permisos</a>
+        {% endif %}
+        <a href="{% url 'inicio' %}" class="btn btn-primary rounded-pill px-4">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %}

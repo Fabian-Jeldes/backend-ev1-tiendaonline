@@ -1,0 +1,434 @@
+[
+{
+  "model": "productos.categoria",
+  "pk": 1,
+  "fields": {
+    "nombre": "Computación",
+    "slug": "computacion",
+    "descripcion": "Notebooks, PCs de escritorio y componentes."
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 2,
+  "fields": {
+    "nombre": "Monitores",
+    "slug": "monitores",
+    "descripcion": "Pantallas para gaming, oficina y diseño."
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 3,
+  "fields": {
+    "nombre": "Periféricos",
+    "slug": "perifericos",
+    "descripcion": "Teclados, mouse y dispositivos de entrada."
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 4,
+  "fields": {
+    "nombre": "Audio",
+    "slug": "audio",
+    "descripcion": "Audífonos, parlantes y micrófonos."
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 5,
+  "fields": {
+    "nombre": "Accesorios",
+    "slug": "accesorios",
+    "descripcion": "Cables, soportes, mochilas y otros complementos."
+  }
+},
+{
+  "model": "productos.categoria",
+  "pk": 6,
+  "fields": {
+    "nombre": "Videojuegos",
+    "slug": "videojuegos",
+    "descripcion": "Consolas, juegos y accesorios gamer."
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 1,
+  "fields": {
+    "nombre": "ASUS",
+    "pais_origen": "Taiwán",
+    "sitio_web": "https://www.asus.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 2,
+  "fields": {
+    "nombre": "Samsung",
+    "pais_origen": "Corea del Sur",
+    "sitio_web": "https://www.samsung.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 3,
+  "fields": {
+    "nombre": "Keychron",
+    "pais_origen": "China",
+    "sitio_web": "https://www.keychron.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 4,
+  "fields": {
+    "nombre": "Sony",
+    "pais_origen": "Japón",
+    "sitio_web": "https://www.sony.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 5,
+  "fields": {
+    "nombre": "Logitech",
+    "pais_origen": "Suiza",
+    "sitio_web": "https://www.logitech.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 6,
+  "fields": {
+    "nombre": "Razer",
+    "pais_origen": "Estados Unidos",
+    "sitio_web": "https://www.razer.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 7,
+  "fields": {
+    "nombre": "Nintendo",
+    "pais_origen": "Japón",
+    "sitio_web": "https://www.nintendo.com"
+  }
+},
+{
+  "model": "productos.marca",
+  "pk": 9,
+  "fields": {
+    "nombre": "JBL",
+    "pais_origen": "Estados Unidos",
+    "sitio_web": "https://www.jbl.com"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 1,
+  "fields": {
+    "nombre": "Notebook Gamer ASUS ROG X Strix",
+    "categoria": 1,
+    "marca": 1,
+    "precio": 1295000,
+    "descripcion": "Potente notebook con procesador AMD Ryzen 7, 16GB RAM, 1TB SSD y tarjeta gráfica NVIDIA GeForce RTX 4060 para gaming y desarrollo de alto rendimiento.",
+    "imagen": "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=600&q=80",
+    "stock": 15,
+    "oferta": true,
+    "descuento": 10,
+    "fecha_creacion": "2026-10-02T20:13:03.088Z",
+    "fecha_actualizacion": "2026-10-02T20:24:23.961Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 2,
+  "fields": {
+    "nombre": "Monitor Curvo Samsung Odyssey 27\"",
+    "categoria": 2,
+    "marca": 2,
+    "precio": 249990,
+    "descripcion": "Monitor curvo 1000R con resolución QHD, tasa de refresco de 144Hz y tiempo de respuesta de 1ms. Ideal para programación y productividad.",
+    "imagen": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=600&q=80",
+    "stock": 8,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-10-02T20:13:03.091Z",
+    "fecha_actualizacion": "2026-10-02T20:13:03.091Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 3,
+  "fields": {
+    "nombre": "Teclado Mecánico Inalámbrico Keychron K2",
+    "categoria": 3,
+    "marca": 3,
+    "precio": 99990,
+    "descripcion": "Teclado mecánico compacto con switches Gateron Brown, retroiluminación RGB, conectividad Bluetooth 5.1 y USB-C. Compatible con Mac y Windows.",
+    "imagen": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80",
+    "stock": 12,
+    "oferta": true,
+    "descuento": 20,
+    "fecha_creacion": "2026-10-02T20:13:03.094Z",
+    "fecha_actualizacion": "2026-10-02T20:24:23.961Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 4,
+  "fields": {
+    "nombre": "Auriculares Inalámbricos Sony WH-1000XM5",
+    "categoria": 4,
+    "marca": 4,
+    "precio": 328000,
+    "descripcion": "Audífonos con cancelación activa de ruido líder en la industria, audio de alta resolución y hasta 30 horas de batería continua con carga rápida.",
+    "imagen": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+    "stock": 15,
+    "oferta": true,
+    "descuento": 15,
+    "fecha_creacion": "2026-10-02T20:13:03.097Z",
+    "fecha_actualizacion": "2026-10-02T20:24:23.959Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 7,
+  "fields": {
+    "nombre": "Mouse Gamer Logitech G502 HERO",
+    "categoria": 3,
+    "marca": 5,
+    "precio": 49990,
+    "descripcion": "Sensor HERO 25K de 25.600 DPI, 11 botones programables, pesas ajustables e iluminación RGB LIGHTSYNC.",
+    "imagen": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=600&q=80",
+    "stock": 25,
+    "oferta": true,
+    "descuento": 10,
+    "fecha_creacion": "2026-11-06T19:01:04.981Z",
+    "fecha_actualizacion": "2026-11-06T19:01:04.982Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 8,
+  "fields": {
+    "nombre": "Teclado Mecánico Razer BlackWidow V4",
+    "categoria": 3,
+    "marca": 6,
+    "precio": 159990,
+    "descripcion": "Switches mecánicos Razer Green, rueda multifunción, reposamuñecas magnético e iluminación Chroma RGB por tecla.",
+    "imagen": "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=600&q=80",
+    "stock": 0,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:04.986Z",
+    "fecha_actualizacion": "2026-11-06T19:01:04.986Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 9,
+  "fields": {
+    "nombre": "Monitor ASUS TUF Gaming 24\" 165Hz",
+    "categoria": 2,
+    "marca": 1,
+    "precio": 189990,
+    "descripcion": "Panel IPS Full HD de 23,8 pulgadas, 165 Hz, 1 ms y compatibilidad con FreeSync Premium y G-SYNC.",
+    "imagen": "https://images.unsplash.com/photo-1586210579191-33b45e38fa2c?auto=format&fit=crop&w=600&q=80",
+    "stock": 6,
+    "oferta": true,
+    "descuento": 12,
+    "fecha_creacion": "2026-11-06T19:01:04.990Z",
+    "fecha_actualizacion": "2026-11-06T19:01:04.990Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 10,
+  "fields": {
+    "nombre": "Monitor Samsung Smart M7 32\" 4K",
+    "categoria": 2,
+    "marca": 2,
+    "precio": 349990,
+    "descripcion": "Pantalla 4K UHD de 32 pulgadas con Smart TV integrado, USB-C con carga de 65 W y modo escritorio remoto.",
+    "imagen": "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&w=600&q=80",
+    "stock": 3,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:04.994Z",
+    "fecha_actualizacion": "2026-11-06T19:01:04.994Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 11,
+  "fields": {
+    "nombre": "Audífonos Gamer Razer BlackShark V2",
+    "categoria": 4,
+    "marca": 6,
+    "precio": 89990,
+    "descripcion": "Drivers TriForce de 50 mm, sonido envolvente THX Spatial Audio y micrófono desmontable con cancelación de ruido.",
+    "imagen": "https://images.unsplash.com/photo-1599669454699-248893623440?auto=format&fit=crop&w=600&q=80",
+    "stock": 14,
+    "oferta": true,
+    "descuento": 25,
+    "fecha_creacion": "2026-11-06T19:01:04.998Z",
+    "fecha_actualizacion": "2026-11-06T19:01:04.998Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 12,
+  "fields": {
+    "nombre": "Audífonos In-Ear Sony WF-1000XM5",
+    "categoria": 4,
+    "marca": 4,
+    "precio": 229990,
+    "descripcion": "Audífonos true wireless con cancelación de ruido líder, audio Hi-Res inalámbrico y hasta 24 horas de batería con estuche.",
+    "imagen": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80",
+    "stock": 9,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:05.001Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.001Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 13,
+  "fields": {
+    "nombre": "Parlante Bluetooth JBL Flip 6",
+    "categoria": 4,
+    "marca": 9,
+    "precio": 99990,
+    "descripcion": "Parlante portátil resistente al agua y polvo IP67, sonido JBL Original Pro y hasta 12 horas de batería.",
+    "imagen": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=600&q=80",
+    "stock": 0,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:05.005Z",
+    "fecha_actualizacion": "2026-11-06T19:02:01.512Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 14,
+  "fields": {
+    "nombre": "Micrófono USB Logitech G Yeti GX",
+    "categoria": 4,
+    "marca": 5,
+    "precio": 129990,
+    "descripcion": "Micrófono dinámico supercardioide para streaming, conexión USB plug and play e iluminación RGB personalizable.",
+    "imagen": "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=600&q=80",
+    "stock": 5,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:05.009Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.009Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 15,
+  "fields": {
+    "nombre": "Control Inalámbrico Sony DualSense PS5",
+    "categoria": 6,
+    "marca": 4,
+    "precio": 69990,
+    "descripcion": "Retroalimentación háptica, gatillos adaptativos, micrófono integrado y batería recargable por USB-C.",
+    "imagen": "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&w=600&q=80",
+    "stock": 20,
+    "oferta": true,
+    "descuento": 15,
+    "fecha_creacion": "2026-11-06T19:01:05.012Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.012Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 16,
+  "fields": {
+    "nombre": "Consola Nintendo Switch OLED",
+    "categoria": 6,
+    "marca": 7,
+    "precio": 349990,
+    "descripcion": "Pantalla OLED de 7 pulgadas, 64 GB de almacenamiento, base con puerto LAN y modos TV, sobremesa y portátil.",
+    "imagen": "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?auto=format&fit=crop&w=600&q=80",
+    "stock": 4,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:05.016Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.016Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 17,
+  "fields": {
+    "nombre": "Notebook Samsung Galaxy Book4 15\"",
+    "categoria": 1,
+    "marca": 2,
+    "precio": 699990,
+    "descripcion": "Intel Core i5 de 13ª generación, 16 GB de RAM, SSD de 512 GB y pantalla Full HD de 15,6 pulgadas.",
+    "imagen": "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=600&q=80",
+    "stock": 7,
+    "oferta": true,
+    "descuento": 8,
+    "fecha_creacion": "2026-11-06T19:01:05.020Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.020Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 18,
+  "fields": {
+    "nombre": "SSD NVMe Samsung 990 PRO 1TB",
+    "categoria": 1,
+    "marca": 2,
+    "precio": 119990,
+    "descripcion": "Unidad M.2 PCIe 4.0 con lectura de hasta 7.450 MB/s, ideal para gaming y edición de video.",
+    "imagen": "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=600&q=80",
+    "stock": 30,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:05.024Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.024Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 19,
+  "fields": {
+    "nombre": "Mochila para Notebook 15.6\" Impermeable",
+    "categoria": 5,
+    "marca": null,
+    "precio": 34990,
+    "descripcion": "Compartimento acolchado para notebook de hasta 15,6 pulgadas, tela repelente al agua y puerto de carga USB.",
+    "imagen": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80",
+    "stock": 18,
+    "oferta": false,
+    "descuento": 0,
+    "fecha_creacion": "2026-11-06T19:01:05.027Z",
+    "fecha_actualizacion": "2026-11-06T19:01:05.027Z"
+  }
+},
+{
+  "model": "productos.producto",
+  "pk": 20,
+  "fields": {
+    "nombre": "Tarjeta de Video ASUS Dual GeForce RTX 4060 8GB",
+    "categoria": 1,
+    "marca": 1,
+    "precio": 329990,
+    "descripcion": "GPU NVIDIA Ada Lovelace con 8 GB GDDR6, DLSS 3, trazado de rayos y doble ventilador Axial-tech.",
+    "imagen": "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=600&q=80",
+    "stock": 2,
+    "oferta": true,
+    "descuento": 10,
+    "fecha_creacion": "2026-11-06T19:01:05.032Z",
+    "fecha_actualizacion": "2026-11-06T19:02:01.517Z"
+  }
+}
+]

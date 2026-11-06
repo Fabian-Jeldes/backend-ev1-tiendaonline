@@ -1,0 +1,77 @@
+{% comment %}
+=====================================================================
+ _filtros.html — Barra de búsqueda y filtros (plantilla parcial)
+=====================================================================
+Se incluye con {% include 'productos/_filtros.html' %} tanto en el catálogo
+como en el panel de administración. Variables que recibe: form, hay_filtros.
+
+- method="get": los filtros viajan en la URL (?q=...&categoria=...).
+  Por eso NO lleva {% csrf_token %}: el token CSRF protege peticiones que
+  MODIFICAN datos (POST). Una búsqueda solo lee, y además no conviene que
+  el token quede visible en la URL.
+- action="": envía el formulario a la misma página donde está.
+- {{ form.campo }} renderiza cada input con el valor actual, así los
+  filtros elegidos se mantienen visibles después de buscar.
+{% endcomment %}
+<form method="get" action="" class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white" role="search" aria-label="Filtrar productos">
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-lg-4">
+            <label for="{{ form.q.id_for_label }}" class="form-label small fw-semibold text-muted mb-1">
+                <i class="bi bi-search me-1"></i>{{ form.q.label }}
+            </label>
+            {{ form.q }}
+        </div>
+        <div class="col-6 col-lg-2">
+            <label for="{{ form.categoria.id_for_label }}" class="form-label small fw-semibold text-muted mb-1">{{ form.categoria.label }}</label>
+            {{ form.categoria }}
+        </div>
+        <div class="col-6 col-lg-2">
+            <label for="{{ form.marca.id_for_label }}" class="form-label small fw-semibold text-muted mb-1">{{ form.marca.label }}</label>
+            {{ form.marca }}
+        </div>
+        <div class="col-12 col-lg-2">
+            <label class="form-label small fw-semibold text-muted mb-1">Rango de precio (CLP)</label>
+            <div class="input-group">
+                {{ form.precio_min }}
+                {{ form.precio_max }}
+            </div>
+        </div>
+        <div class="col-12 col-lg-2">
+            <label for="{{ form.orden.id_for_label }}" class="form-label small fw-semibold text-muted mb-1">{{ form.orden.label }}</label>
+            {{ form.orden }}
+        </div>
+    </div>
+
+    {# Errores de validación de los filtros (ej: mínimo mayor que máximo, texto en un precio) #}
+    {% if form.errors %}
+        <div class="text-danger small mt-2">
+            {% for campo in form %}
+                {% for error in campo.errors %}
+                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ campo.label }}: {{ error }}</div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="d-flex flex-wrap align-items-center gap-3 mt-3">
+        <div class="form-check form-switch mb-0">
+            {{ form.disponibles }}
+            <label class="form-check-label small" for="{{ form.disponibles.id_for_label }}">{{ form.disponibles.label }}</label>
+        </div>
+        <div class="form-check form-switch mb-0">
+            {{ form.ofertas }}
+            <label class="form-check-label small" for="{{ form.ofertas.id_for_label }}">{{ form.ofertas.label }}</label>
+        </div>
+        <div class="ms-auto d-flex gap-2">
+            {% if hay_filtros %}
+                {# Enlace a la misma URL sin parámetros = quitar todos los filtros #}
+                <a href="{{ request.path }}" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+                </a>
+            {% endif %}
+            <button type="submit" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-funnel me-1"></i>Filtrar
+            </button>
+        </div>
+    </div>
+</form>

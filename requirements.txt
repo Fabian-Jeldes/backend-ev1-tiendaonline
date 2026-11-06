@@ -1,0 +1,13 @@
+# Dependencias del proyecto. Se instalan todas con:
+#   pip install -r requirements.txt
+
+# Framework web backend.
+Django==6.1
+
+# Conector (driver) entre Python y MySQL. Django lo usa cuando
+# ENGINE = 'django.db.backends.mysql' en settings.py.
+mysqlclient==2.3.0
+
+# Lee el archivo .env y carga sus valores como variables de entorno,
+# para no escribir contraseñas dentro del código.
+python-dotenv==1.2.1

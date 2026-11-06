@@ -24,7 +24,7 @@
                 </div>
                 <div>
                     <h2 class="fw-bold mb-0 text-dark">{{ titulo }}</h2>
-                    <p class="text-muted small mb-0">Completa los campos para {% if producto %}actualizar{% else %}incorporar{% endif %} este artículo en la base de datos SQLite.</p>
+                    <p class="text-muted small mb-0">Completa los campos para {% if producto %}actualizar{% else %}incorporar{% endif %} este artículo en la base de datos MySQL.</p>
                 </div>
             </div>
 
@@ -59,7 +59,7 @@
                         {% endif %}
                     </div>
 
-                    <!-- CATEGORÍA -->
+                    <!-- CATEGORÍA (ForeignKey: opciones leídas desde la tabla productos_categoria) -->
                     <div class="col-md-4">
                         <label for="{{ form.categoria.id_for_label }}" class="form-label fw-semibold">
                             Categoría <span class="text-danger">*</span>
@@ -71,6 +71,23 @@
                                     <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
                                 {% endfor %}
                             </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- MARCA (ForeignKey opcional: opciones leídas desde la tabla productos_marca) -->
+                    <div class="col-12">
+                        <label for="{{ form.marca.id_for_label }}" class="form-label fw-semibold">
+                            Marca <span class="text-muted small fw-normal">(opcional)</span>
+                        </label>
+                        {{ form.marca }}
+                        {% if form.marca.errors %}
+                            <div class="text-danger small mt-1">
+                                {% for error in form.marca.errors %}
+                                    <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <small class="text-muted">Las marcas se administran desde el panel /admin/.</small>
                         {% endif %}
                     </div>
 

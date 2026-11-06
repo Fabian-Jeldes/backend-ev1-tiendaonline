@@ -23,6 +23,9 @@
                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-1 rounded-pill">
                     {{ producto.categoria }}
                 </span>
+                {% if producto.marca %}
+                    <span class="badge bg-dark px-3 py-1 rounded-pill ms-1">{{ producto.marca }}</span>
+                {% endif %}
                 <span class="text-muted small ms-2">Código SKU: #00{{ producto.id }}</span>
             </div>
 
