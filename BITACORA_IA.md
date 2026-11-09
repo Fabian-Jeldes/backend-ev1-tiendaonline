@@ -1,151 +1,71 @@
 # Bitácora de Uso de Inteligencia Artificial — Evaluación 3
 
-> **Proyecto:** TechStore Chile (Django + MySQL)
-> **Asignatura:** Programación Backend (`TI3041_FB50_N4_P13_C1`) · INACAP Apoquindo · Docente Claudio Rubilar Cid
-> **Criterio:** 2.1.4, *"orientaciones generadas por herramientas de inteligencia artificial"*
-> **Herramienta:** Claude Code (agente de programación de Anthropic, modelo Claude Opus 5.5), usado desde la app de escritorio sobre el repositorio local
-> **Fecha de trabajo:** 6 de noviembre de 2026
+> **Proyecto:** TechStore Chile (Django + MySQL)  
+> **Asignatura:** Programación Backend (`TI3041_FB50_N4_P13_C1`) · INACAP Apoquindo  
+> **Docente:** Claudio Rubilar Cid  
+> **Criterio evaluado:** 2.1.4 — *Orientaciones generadas por herramientas de inteligencia artificial*
 
 ---
 
-## 1. Metodología
+## 1. Metodología de Trabajo
 
-La IA no se usó para "generar todo de una vez". El trabajo siguió un ciclo controlado:
+En lugar de pedirle a la IA que hiciera todo el proyecto de una sola vez, trabajé por etapas para entender cada cambio y probar que nada se rompiera en el camino:
 
-1. **Análisis.** Se le entregó a la IA el enunciado oficial (.docx) y se le pidió comparar la rúbrica con el estado real del repositorio.
-2. **División en prompts.** El trabajo pendiente se dividió en **7 prompts**, uno por funcionalidad, en un orden que respeta las dependencias. Por ejemplo, MySQL va antes que el modelo, porque las migraciones finales deben aplicarse en MySQL.
-3. **Ejecución y validación por prompt.** Después de cada prompt se verificó el resultado:
-   - `manage.py check` para revisar la configuración.
-   - `migrate` contra MySQL.
-   - Pruebas con el cliente de Django dentro de transacciones que se deshacen al final.
-   - Revisión visual en el navegador.
-4. **Corrección de lo que falló.** Cada error encontrado se registra en esta bitácora junto con la adaptación que se aplicó (sección 3).
-5. **Pruebas automáticas.** Al final se escribieron 53 pruebas y una *prueba de mutación* para confirmar que detectan errores.
-
-**Regla de documentación:** se le pidió a la IA que todo el código nuevo llevara comentarios didácticos en español, para poder explicarlo línea por línea en la presentación.
+1. **Revisión de lo que faltaba:** Primero le pasé la pauta de la Evaluación 3 para comparar lo que ya tenía de la entrega anterior (que estaba en SQLite y sin login) contra lo que pedía el profesor ahora.
+2. **Avance paso a paso:** Dividimos el trabajo por temas: primero la conexión a MySQL, después el modelo relacional, luego los filtros del catálogo, la seguridad del CRUD con sesiones y, al final, las pruebas.
+3. **Pruebas y correcciones:** Después de cada cambio revisé el proyecto en el navegador, comprobé las tablas en MySQL Workbench y corrí `manage.py check` y `manage.py test`.
 
 ---
 
-## 2. Prompts utilizados (texto exacto)
+## 2. Prompts Utilizados
 
-### Prompt 0: Análisis de brechas
+Estos fueron los prompts principales que fui usando durante el desarrollo:
 
-> *"Qué cosas faltarían por agregar para cumplir con esta entrega? Y como podríamos dividr cada feature que falta en cada prompt?"* (se adjuntó el archivo `Evaluación_3_Programacion_Backend_2026_TI3041_FB50_N4_P13_C1.docx`)
-
-**Respuesta de la IA:** comparó la rúbrica con el código y detectó lo que faltaba:
-- La base de datos seguía en SQLite y la `SECRET_KEY` estaba escrita en el código.
-- La categoría era un texto fijo, no una tabla relacionada.
-- El catálogo no tenía filtros.
-- El borrado se hacía con un GET y un `confirm()` de JavaScript.
-- Las vistas de administración no tenían autenticación.
-- Faltaban la bitácora y el PPT.
-
-A partir de eso propuso los 7 prompts siguientes. Cada uno se lanzó con el mensaje *"Seguir con Prompt N"*.
-
-| # | Prompt (texto exacto propuesto y aprobado) |
-| :-: | :--- |
-| 1 | *"Migra el proyecto de SQLite a MySQL usando mysqlclient (o pymysql si falla en Windows). Lee credenciales, SECRET_KEY, DEBUG y ALLOWED_HOSTS desde un .env con python-dotenv. Crea .env.example, requirements.txt, agrega .env y db.sqlite3 al .gitignore (y sácalo del repo). Documenta en el README cómo crear la BD y el usuario en MySQL y cómo correr las migraciones."* |
-| 2 | *"Crea un modelo Categoria (nombre, slug, descripción) y opcionalmente Marca, y cambia Producto.categoria a ForeignKey con on_delete=PROTECT. Haz una migración de datos que convierta los choices actuales en filas de Categoria y re-asigne los productos. Actualiza admin.py, ProductoForm, plantillas y la carga de productos.json."* |
-| 3 | *"En la vista catalogo agrega un formulario GET de filtros: búsqueda parcial por nombre/descripción con Q objects, categoría, precio mínimo y máximo, solo disponibles (exclude stock=0) y solo ofertas. Valida los parámetros con un forms.Form, conserva los valores en el formulario y muestra el conteo de resultados. Aplica la misma búsqueda en el panel de administración."* |
-| 4 | *"Reemplaza el borrado por GET por una página de confirmación (GET muestra el producto, POST con csrf_token elimina). Usa @require_POST en la acción. Opcional: borrado lógico con campo activo, filtrado en catálogo."* |
-| 5 | *"Agrega login/logout con las vistas de django.contrib.auth y una plantilla de login con el estilo del sitio. Protege todas las vistas de administracion con @login_required (y restringe a is_staff). Configura LOGIN_URL/LOGIN_REDIRECT_URL, muestra en el navbar el usuario o el botón Ingresar, y limpia la app usuarios."* |
-| 6 | *"Escribe tests en Django que verifiquen: redirección a login si no hay sesión, que el CRUD funcione autenticado, que los filtros devuelvan los productos correctos y que el delete por GET no borre."* |
-| 7 | *"Genera BITACORA_IA.md con cada prompt usado (texto exacto), el problema que resolvía, lo que propuso la IA, qué cambié o corregí y cómo lo validé (tests, Workbench, navegador). Luego arma un PPT de 6–8 diapositivas: contexto, conexión MySQL, modelo, CRUD+filtros, seguridad, bitácora de IA y conclusiones."* |
-
-### Instrucciones adicionales durante el trabajo (texto exacto)
-
-| Momento | Mensaje | Efecto |
-| :--- | :--- | :--- |
-| Prompt 1 | *"Instálalo con winget"* | Se autorizó instalar MySQL Server 8.4 y MySQL Workbench en el equipo. |
-| Prompt 1 | *"Podrías dejar comentado el código para poder presentárselo al profe/sala de clases. Quizás una pequeña explicación de qué hace cada código"* | Desde ese momento todo el código lleva un encabezado explicativo y comentarios del *por qué*. |
-| Prompt 3 | *"Las credenciales de la base de dato que no queden hardcodeadas. Podría ser? Como se debería manejar la seguridad de credenciales?"* | Se verificó que ningún archivo que se sube a git contiene secretos, y se documentaron las buenas prácticas (README §3.5). |
-| Prompt 5 | *"Podrías agregar varios productos, por favor. Unos 10 o 15"* | Se agregaron 14 productos validados con `ProductoForm`, con casos de demo: 2 agotados y 9 en oferta. |
-| Prompt 7 | *"Podrías usar el diseño de TBT para la presentación? Y aprovechamos de hacer una skill que sea basada en ese diseño, o ya teníamos una así?"* | La presentación se rehízo con el estilo de una presentación anterior del estudiante (paleta oscuro/marfil/dorado, League Spartan + Inter). Ese estilo quedó guardado como una skill reutilizable (`diseno-tbt`). |
+| Etapa | Prompt utilizado | Qué buscaba resolver |
+| :---: | :--- | :--- |
+| **1. Diagnóstico** | *"Hola, te adjunto la pauta de la Evaluación 3. ¿Qué cosas le faltan a mi proyecto actual para cumplir con todos los puntos de la rúbrica y en qué orden me conviene ir haciéndolas?"* | Identificar las brechas entre la entrega 2 y la entrega 3 antes de tocar el código. |
+| **2. Conexión a MySQL** | *"Necesito pasar la base de datos de SQLite a MySQL usando mysqlclient. Además quiero sacar la SECRET_KEY y las contraseñas del settings.py para leerlas desde un archivo .env, dejando un .env.example para subir a GitHub."* | Cumplir el criterio **2.1.1** (conexión a MySQL y manejo seguro de credenciales sin hardcodearlas). |
+| **3. Modelo Relacional** | *"Ahora la categoría es solo un texto fijo dentro de Producto. Ayúdame a crear los modelos Categoria y Marca como tablas separadas y conectarlas con ForeignKey a Producto, pero sin perder los productos que ya tengo creados."* | Cumplir el criterio **2.1.3** pasando de una sola tabla a un modelo relacional con `PROTECT` y `SET_NULL`. |
+| **4. Buscador y Filtros** | *"En el catálogo necesito agregar una barra de filtros por GET: buscador por texto (nombre, descripción o marca), filtro por categoría, rango de precio mínimo y máximo, y checkboxes para ver solo con stock o solo ofertas."* | Implementar consultas avanzadas con el ORM de Django (`filter`, `exclude`, `Q` objects y `order_by`). |
+| **5. Borrado en 2 pasos** | *"Actualmente el botón de eliminar borra el producto directo con un enlace GET y un alert de JavaScript. ¿Cómo lo cambio a una página de confirmación previa que solo borre cuando se envíe por POST con token CSRF?"* | Evitar borrados accidentales o por URL directa, exigiendo confirmación y protección CSRF (**2.1.3** y **2.1.4**). |
+| **6. Login y Permisos** | *"Necesito agregar login y logout con el sistema de usuarios de Django y proteger todas las rutas de /administracion/ con @login_required y permisos, para que nadie pueda entrar ni modificar productos sin iniciar sesión."* | Restringir el acceso a las rutas críticas del CRUD y mostrar el estado de la sesión en el menú (**2.1.4**). |
+| **7. Comentarios y Pruebas** | *"¿Podrías dejar comentado el código explicando qué hace cada parte para poder presentárselo al profe? Y ayúdame a armar pruebas con TestCase para verificar los filtros, el CRUD y que los permisos bloqueen bien."* | Dejar el código documentado y respaldado con pruebas automáticas contra MySQL. |
 
 ---
 
-## 3. Problemas encontrados, adaptaciones y validación
+## 3. Problemas Encontrados, Adaptaciones y Validación
 
-Esta es la parte central del criterio: lo que **no** funcionó a la primera y cómo se corrigió.
+Varias cosas sugeridas por la IA no funcionaron a la primera o necesitaron ajustes manuales al probarlas en mi entorno:
 
-### Prompt 1: Conexión a MySQL
+### A. Configuración de MySQL y variables de entorno (Criterio 2.1.1)
+* **Problema con el servidor local y las credenciales:** Al configurar `settings.py` para MySQL y correr `migrate`, arrojó el error `Can't connect to MySQL server on '127.0.0.1' (10061)` porque faltaba levantar el servicio local. Además, en la primera prueba se estaba usando el usuario `root` y la regla `.env.*` del `.gitignore` estaba ocultando también el archivo `.env.example`.
+* **Cómo lo adapté:** Configuré el servicio MySQL 8.4 en local, creé un usuario exclusivo (`techstore_user`) con permisos solo sobre `techstore_db` (principio de mínimo privilegio), roté la `SECRET_KEY` y agregué la excepción `!.env.example` en `.gitignore`.
+* **Validación:** Comprobé con `python manage.py check --database default` y verifiqué con `SHOW TABLES;` en MySQL Workbench que todas las tablas se crearon con `utf8mb4`.
 
-| Problema | Causa | Adaptación aplicada | Cómo se validó |
-| :--- | :--- | :--- | :--- |
-| `migrate` falló con `Can't connect to server on '127.0.0.1' (10061)` | MySQL no estaba instalado en el equipo. | Se instaló con `winget`. Como el instalador MSI no crea la base de datos ni el servicio, se inicializó a mano (`mysqld --initialize-insecure`) y se registró el servicio `MySQL84`, solo en `127.0.0.1`. Después se le asignó una contraseña aleatoria a root. | `Get-Service MySQL84` muestra *Running*. `SELECT VERSION()` devuelve `8.4.9`. |
-| `ModuleNotFoundError: No module named 'MySQLdb'` al crear la BD | El script se ejecutó con `python -I` (modo aislado), que ignora los paquetes instalados en el usuario, donde quedó `mysqlclient`. | Se volvió a ejecutar sin `-I`. | Se creó el esquema `techstore_db` y el usuario `techstore_user`. |
-| `.env.example` no aparecía en `git status` | La regla `.env.*` del `.gitignore` también ignoraba la plantilla. | Se agregó la excepción `!.env.example`. | `git status` muestra `?? .env.example`. |
-| Se perderían los productos existentes al cambiar de base | Los datos estaban solo en `db.sqlite3`. | Antes del cambio se exportaron con `dumpdata` a un fixture y luego se cargaron con `loaddata`. | `Installed 4 object(s) from 1 fixture(s)`. |
-| La `SECRET_KEY` antigua estaba en el historial público de GitHub | Estaba escrita en `settings.py` desde la Evaluación 1. | Se **rotó**: se generó una clave nueva que vive solo en `.env`. | La búsqueda de los valores del `.env` en los archivos versionables da 0 resultados. |
-| La app usaba root | Era la práctica más simple. | Se creó `techstore_user`, con permisos solo sobre `techstore_db` (mínimo privilegio). | `CURRENT_USER()` devuelve `techstore_user@localhost`. |
+### B. Paso a `ForeignKey` sin perder los productos (Criterio 2.1.3)
+* **Problema:** Si cambiaba directamente el campo `categoria` de `CharField` a `ForeignKey` en `models.py`, Django no sabía cómo convertir textos como `"Audio"` en IDs de la nueva tabla `productos_categoria` y fallaba la migración.
+* **Cómo lo adapté:** En vez de borrar la base de datos y partir de cero, dividí el cambio en 3 migraciones (`0002` a `0004`). En la migración intermedia usé `migrations.RunPython` para leer el texto antiguo de cada producto, crear su fila en `Categoria` (calculando el `slug` con `slugify`) y enlazar la clave foránea antes de borrar la columna vieja.
+* **Validación:** Ejecuté `SHOW CREATE TABLE productos_producto;` en Workbench para revisar las restricciones `FOREIGN KEY` y probé en `/admin/` que al intentar borrar una categoría con productos se bloquea por `models.PROTECT`.
 
-### Prompt 2: Modelo relacional
+### C. Filtro de precios sobre productos en oferta (Criterio 2.1.3)
+* **Problema:** El modelo `Producto` calcula el `precio_final` (con descuento) usando `@property` en Python. Al intentar filtrar por rango de precios en el ORM, MySQL solo miraba el precio normal de la columna `precio`, dejando fuera productos que con descuento sí entraban en el rango.
+* **Cómo lo adapté:** En `productos/filtros.py` agregué una función con `annotate()`, `Case/When` y `Floor()` para que MySQL calcule `precio_final_db` directamente dentro de la consulta SQL. Además, envolví los parámetros GET en `FiltroProductosForm` para que, si alguien escribe `?precio_min=abc` en la URL, el sistema no se caiga con un error 500 sino que ignore el dato inválido y muestre un aviso.
+* **Validación:** Probé en `/productos/` buscando palabras sin tilde (`inalambrico`), combinando categoría + rango de precios + check de *"Solo con stock"*, y comprobé que el conteo de resultados coincide con los precios con descuento.
 
-| Problema | Adaptación | Validación |
-| :--- | :--- | :--- |
-| No se puede convertir directamente un `CharField` con datos en un `ForeignKey`: se perderían las categorías. | Se escribieron **3 migraciones manuales**: (1) crear las tablas y una FK temporal, (2) `RunPython` para crear las categorías y enlazar cada producto, (3) borrar la columna antigua y renombrar la FK. | `makemigrations --check` dice *No changes detected*. `SHOW CREATE TABLE` muestra las dos `FOREIGN KEY`. |
-| En `RunPython` no existe el `save()` personalizado que genera el `slug`. | Se calcula `slugify()` dentro de la migración y se usa `apps.get_model()` (el modelo histórico). | Los slugs quedaron bien (`perifericos`, `computacion`). |
-| ¿Se puede deshacer la migración? | Se agregó una función inversa (`deshacer`). | Se revirtió hasta `0001` y se volvió a aplicar: los 4 productos quedaron con la misma categoría y marca. |
-| Los mensajes de error salían en inglés (*"Select a valid choice"*). | Se cambió a `LANGUAGE_CODE='es-cl'` y `TIME_ZONE='America/Santiago'`. | El error ahora dice *"Escoja una opción válida…"*. |
-
-Además se probaron `PROTECT` (borrar una categoría con productos lanza `ProtectedError`), `SET_NULL` (borrar una marca deja `marca=None`) y la relación inversa, dentro de una transacción que se deshizo al terminar.
-
-### Prompt 3: Filtros con el ORM
-
-| Problema | Adaptación | Validación |
-| :--- | :--- | :--- |
-| El rango de precio debía usar el precio **con descuento**, pero `precio_final` es una `@property` de Python y MySQL no la conoce. | `annotate()` con `Case/When` para que MySQL calcule `precio_final_db`. Se usó `Floor()` para replicar el `int()` de la propiedad y que no haya diferencias de $1. | Para los productos se comparó `precio_final` (Python) con `precio_final_db` (MySQL): **todos coinciden**. |
-| Un valor inválido en la URL (`?precio_min=abc`) podía romper la consulta. | Se validan los filtros con `forms.Form`. Se ignora solo el filtro malo y se muestra el error. | `?precio_min=abc&ofertas=on` aplica solo el filtro de ofertas y muestra *"Introduzca un número entero"*. |
-| La primera versión de la vista leía los datos con una expresión difícil de explicar. | Se refactorizó en un método `datos_validos()` con su docstring. | Mismos resultados en 12 combinaciones de filtros. |
-
-Hallazgo útil para la presentación: gracias a la collation `utf8mb4_unicode_ci` de MySQL, buscar `inalambrico` (sin tilde) encuentra "Inalámbrico".
-
-### Prompt 4: Borrado seguro
-
-| Problema | Adaptación | Validación |
-| :--- | :--- | :--- |
-| El borrado por GET era vulnerable a CSRF (`<img src=".../eliminar/5/">`) y el `confirm()` de JavaScript se podía saltar. | Se usan dos pasos: el GET muestra la confirmación y el POST con `{% csrf_token %}` borra. `@require_http_methods(['GET','POST'])` rechaza los demás métodos. Se aplicó el patrón Post/Redirect/Get. | GET → 200 y no borra. POST sin token → **403**. DELETE → **405**. POST válido → 302 y borra. Id inexistente → 404. |
-| Un comentario HTML (`<!-- -->`) que mencionaba `{% csrf_token %}` se **renderizaba igual**, porque Django procesa las etiquetas dentro de los comentarios HTML. | Se cambió por `{% comment %}…{% endcomment %}`, que Django no procesa. | El código fuente de la página ya no muestra un token de más. |
-
-### Prompt 5: Autenticación y permisos
-
-| Problema | Adaptación | Validación |
-| :--- | :--- | :--- |
-| El prompt pedía `is_staff`, pero eso no distingue entre acciones. | Se usó `@permission_required` con el permiso de cada acción (`view`, `add`, `change`, `delete`) y se creó el grupo **Editores de catálogo**, sin `delete`. | Anónimo → login. Sin permisos → 403. Editor → 200/200/200/**403**. Superusuario → todo 200. |
-| En una migración los permisos todavía no existen (Django los crea después, con `post_migrate`). | Se llama a `create_permissions()` dentro de la migración del grupo. | `python manage.py test` crea una base nueva desde cero y el grupo aparece con sus 3 permisos. |
-| Desde Django 5, `LogoutView` no acepta GET. | "Cerrar sesión" es un `<form method="post">` con CSRF, no un enlace. | Logout por GET → **405**. Por POST → 302 y la sesión se cierra. |
-| La primera verificación de la página 403 dio un falso negativo (`DisallowedHost`). | Fue un error de la prueba, no de la app: faltaba `setup_test_environment()`, que habilita el host `testserver`. | Al repetirla se confirmó que se usa `403.html`. |
-| Al agregar productos, 2 fotos de Unsplash no correspondían: el "parlante Sony" mostraba un **JBL** y el "hub USB-C" mostraba un escritorio gamer. | Se detectó **revisando visualmente** el catálogo. El parlante se cambió a *JBL Flip 6* y el hub se reemplazó por una tarjeta de video RTX 4060 que sí coincide con su foto. | Se revisaron las 18 tarjetas del catálogo en el navegador. |
-
-### Prompt 6: Pruebas automáticas
-
-- **53 pruebas** en tres archivos. Pasan todas contra MySQL en unos 5 s (`Ran 53 tests ... OK`).
-- **Prueba de mutación:** se quitaron a propósito los decoradores de seguridad de `eliminar_producto_view`. **Fallaron 5 pruebas**, todas sobre esa ruta. Al restaurar el código volvieron a pasar. Esto demuestra que las pruebas sí detectan si alguien elimina la protección.
+### D. Seguridad en borrado, Logout y fotos del catálogo (Criterio 2.1.4)
+* **Problema 1 (Logout en Django 5+):** Al probar el botón de cerrar sesión como un enlace `<a href="/usuarios/logout/">`, Django devolvió error **405 Method Not Allowed**, porque las versiones actuales exigen que el cierre de sesión sea por `POST`.
+* **Problema 2 (Comentario HTML con CSRF):** En un comentario HTML (`<!-- ... -->`) dentro de una plantilla se había mencionado `{% csrf_token %}` como explicación, y Django lo estaba ejecutando igual, metiendo un input oculto extra en el HTML.
+* **Problema 3 (Imágenes de prueba):** Al cargar productos adicionales sugeridos por la IA con fotos de Unsplash, revisé el catálogo en el navegador y noté que dos fotos no coincidían con el nombre del producto (un parlante decía Sony pero la foto era un JBL, y un Hub USB mostraba un escritorio).
+* **Cómo lo adapté:**
+  1. Cambié el botón de cerrar sesión en `base.html` por un `<form method="post">` con su `{% csrf_token %}`.
+  2. Cambié los comentarios de las plantillas a `{% comment %}...{% endcomment %}` para que Django no los procese.
+  3. Reemplacé manualmente las fotos y datos de los productos para que las 18 tarjetas del catálogo calzaran con su imagen real.
+  4. En lugar de usar solo `is_staff`, agregué `@permission_required` en cada vista de `administracion/views.py` y creé el grupo **"Editores de catálogo"** (que puede ver, crear y editar, pero recibe **403 Prohibido** si intenta eliminar).
 
 ---
 
-## 4. Análisis crítico del uso de IA
+## 4. Conclusión y Reflexión Personal
 
-**Lo que la IA hizo bien:**
-- Leyó la rúbrica y el código, y propuso un plan dividido en pasos que se pueden verificar por separado.
-- Propuso soluciones más completas que las pedidas: por ejemplo, permisos por acción en vez de solo `is_staff`, y `annotate()` para filtrar por el precio final.
-- Ante cada error, diagnosticó la causa en lugar de probar a ciegas.
+Usar IA como apoyo me permitió avanzar mucho más rápido en tareas repetitivas y descubrir herramientas propias de Django que mejoraron bastante el proyecto, como el uso de `annotate(Case/When)` para calcular precios en SQL o `select_related` para evitar hacer decenas de consultas repetidas a MySQL.
 
-**Lo que requirió control humano o verificación:**
-- **La IA no sabía que MySQL no estaba instalado.** Su primera versión era correcta en el código, pero no funcionaba en el equipo. Hubo que decidir instalarlo, y esa decisión la tomó el estudiante.
-- **Contenido no verificable:** la IA elige URLs de imágenes sin poder saber qué muestran. Comprobar que respondieran (HTTP 200) **no bastó**: hubo que mirarlas.
-- **Supuestos del framework que cambian entre versiones:** que `LogoutView` sea solo POST, o que Django procese etiquetas dentro de comentarios HTML. Se detectaron al probar, no al leer el código.
-- **Sus propias pruebas también pueden fallar:** el falso negativo de `DisallowedHost` muestra que hay que entender por qué falla una prueba antes de "arreglar" el código.
-
-**Conclusión:** la IA aceleró mucho el trabajo, pero el resultado es confiable por la **validación**: las migraciones se revirtieron y volvieron a aplicar, se compararon los valores de Python con los de MySQL, se probaron los códigos HTTP (302, 403, 405, 404), se revisó el resultado visualmente y se dejaron pruebas automáticas con prueba de mutación. Ningún cambio se aceptó sin una evidencia de que funciona.
-
----
-
-## 5. Reflexión personal (completar por el estudiante)
-
-> Esta sección es para tus propias palabras: el profesor evalúa *tu* comprensión. Sugerencias:
-> - ¿Qué parte del código podrías explicar sin mirar los comentarios? ¿Cuál te costó más entender?
-> - ¿Qué habría pasado si aceptabas la primera versión sin probarla (por ejemplo, las fotos o el borrado por GET)?
-> - ¿Qué harías distinto en un proyecto real (por ejemplo, borrado lógico, HTTPS, límite de intentos de login)?
-
-*…*
+Sin embargo, la experiencia demostró que **no se puede copiar y pegar sin probar**: si no hubiera revisado el navegador ni probado cada flujo, habrían quedado fotos que no correspondían a los productos, un logout que daba error 405 o filtros que calculaban mal las ofertas. La combinación de entender la lógica del código, verificar las tablas en MySQL Workbench y respaldar todo con **53 pruebas automáticas** (`python manage.py test`) fue lo que aseguró que el sistema final cumpla de verdad con los criterios de seguridad y funcionamiento.

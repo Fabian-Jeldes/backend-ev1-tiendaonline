@@ -92,9 +92,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',       # Sesiones: recordar al usuario entre páginas
     'django.contrib.messages',       # Mensajes flash ("Producto guardado con éxito")
     'django.contrib.staticfiles',    # Servir CSS, JS e imágenes
-    'productos',                     # App propia: catálogo, detalle y contacto
-    'administracion',                # App propia: CRUD de productos
-    'usuarios',                      # App propia: login, logout, perfil y grupo de permisos
+    'productos',                     # catálogo, detalle y contacto
+    'administracion',                # CRUD de productos
+    'usuarios',                      # login, logout, perfil y grupo de permisos
 ]
 
 
